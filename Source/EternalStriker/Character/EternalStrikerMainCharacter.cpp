@@ -48,7 +48,6 @@ void AEternalStrikerMainCharacter::AddIMCAndBindActions(UInputComponent* InPlaye
 
 	if (ensureAlways(IsValid(MoveIA)))
 	{
-
 		EnhancedPlayerInputComponent->BindAction(MoveIA, ETriggerEvent::Triggered, this, &ThisClass::MoveCharacter);
 	}
 }
