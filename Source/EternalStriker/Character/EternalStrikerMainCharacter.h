@@ -30,6 +30,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "IA")
 	TObjectPtr<UInputAction> MoveIA;
 
+	UPROPERTY(EditAnywhere, Category = "IA")
+	TObjectPtr<UInputAction> JumpIA;
+
 	UPROPERTY(EditAnywhere, Category = "IMC")
 	TObjectPtr<UInputMappingContext> MainCharacterIMC;
 };
