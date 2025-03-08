@@ -8,6 +8,9 @@
 class UInputAction;
 class UInputMappingContext;
 
+class USpringArmComponent;
+class UCameraComponent;
+
 UCLASS()
 class ETERNALSTRIKER_API AEternalStrikerMainCharacter : public ACharacter
 {
@@ -27,12 +30,35 @@ private:
 	UFUNCTION()
 	void MoveCharacter(const FInputActionValue& InActionValue);
 
+	UFUNCTION()
+	void RunCharacter(const FInputActionValue& InActionValue);
+
+	void SetCharacterMovementValues();
+
 	UPROPERTY(EditAnywhere, Category = "IA")
 	TObjectPtr<UInputAction> MoveIA;
+
+	UPROPERTY(EditAnywhere, Category = "IA")
+	TObjectPtr<UInputAction> RunIA;
 
 	UPROPERTY(EditAnywhere, Category = "IA")
 	TObjectPtr<UInputAction> JumpIA;
 
 	UPROPERTY(EditAnywhere, Category = "IMC")
 	TObjectPtr<UInputMappingContext> MainCharacterIMC;
+
+	UPROPERTY()
+	TObjectPtr<USpringArmComponent> SpringArmComponent;
+
+	UPROPERTY()
+	TObjectPtr<UCameraComponent> CameraComponent;
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bIsRunning{ false };
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float MaxRunSpeed{ 950.f };
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float MaxWalkSpeed{ 550.f };
 };
