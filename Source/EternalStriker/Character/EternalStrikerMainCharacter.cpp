@@ -96,8 +96,6 @@ void AEternalStrikerMainCharacter::RunCharacter(const FInputActionValue& InActio
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 	check(MovementComponent);
 
-	bool zero = InActionValue.IsNonZero();
-
 	const bool bInputDashKey = InActionValue.IsNonZero();
 	if (bInputDashKey)
 	{
