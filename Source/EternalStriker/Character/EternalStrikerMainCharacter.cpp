@@ -68,23 +68,27 @@ void AEternalStrikerMainCharacter::AddIMCAndBindActions(UInputComponent* InPlaye
 		EnhancedPlayerInputComponent->BindAction(MoveIA, ETriggerEvent::Triggered, this, &ThisClass::MoveCharacter);
 		EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Started, this, &ThisClass::RunCharacter);
 		EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Completed, this, &ThisClass::RunCharacter);
+		EnhancedPlayerInputComponent->BindAction(JumpIA, ETriggerEvent::Started, this, &ThisClass::Jump);
 	}
 }
 
 void AEternalStrikerMainCharacter::MoveCharacter(const FInputActionValue& InActionValue)
 {
-	const FVector2D& MovementVector = InActionValue.Get<FVector2D>();
-
 	check(Controller);
 
-	const FRotator& Rotation = Controller->GetControlRotation();
-	const FRotator& YawRotation = FRotator(0, Rotation.Yaw, 0);
+	if (bCanMove)
+	{
+		const FVector2D& MovementVector = InActionValue.Get<FVector2D>();
 
-	const FVector& ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	const FVector& RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		const FRotator& Rotation = Controller->GetControlRotation();
+		const FRotator& YawRotation = FRotator(0, Rotation.Yaw, 0);
 
-	AddMovementInput(ForwardDirection, MovementVector.Y);
-	AddMovementInput(RightDirection, MovementVector.X);
+		const FVector& ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector& RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		AddMovementInput(ForwardDirection, MovementVector.Y);
+		AddMovementInput(RightDirection, MovementVector.X);
+	}
 }
 
 void AEternalStrikerMainCharacter::RunCharacter(const FInputActionValue& InActionValue)
@@ -92,7 +96,9 @@ void AEternalStrikerMainCharacter::RunCharacter(const FInputActionValue& InActio
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
 	check(MovementComponent);
 
-	const bool bInputDashKey = InActionValue.Get<bool>();
+	bool zero = InActionValue.IsNonZero();
+
+	const bool bInputDashKey = InActionValue.IsNonZero();
 	if (bInputDashKey)
 	{
 		bIsRunning = true;
@@ -111,8 +117,7 @@ void AEternalStrikerMainCharacter::SetCharacterMovementValues()
 	check(MovementComponent);
 
 	MovementComponent->bOrientRotationToMovement = true;
-	MovementComponent->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-	MovementComponent->JumpZVelocity = 700.f;
+	MovementComponent->RotationRate = FRotator(0.0f, 300.0f, 0.0f);
 	MovementComponent->AirControl = 0.35f;
 	MovementComponent->MaxWalkSpeed = MaxWalkSpeed;
 	MovementComponent->MinAnalogWalkSpeed = 20.f;
@@ -120,4 +125,6 @@ void AEternalStrikerMainCharacter::SetCharacterMovementValues()
 	MovementComponent->MaxAcceleration = 1000.f;
 	MovementComponent->BrakingDecelerationWalking = 1100.f;
 	MovementComponent->BrakingDecelerationFalling = 1500.0f;
+	MovementComponent->JumpZVelocity = 450.f;
+	MovementComponent->GravityScale = 1.5f;
 }
