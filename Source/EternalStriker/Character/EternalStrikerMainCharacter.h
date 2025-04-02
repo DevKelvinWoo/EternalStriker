@@ -36,6 +36,9 @@ private:
 	UFUNCTION()
 	void JumpCharacter(const FInputActionValue& InActionValue);
 
+	UFUNCTION()
+	void LookCharacter(const FInputActionValue& InActionValue);
+
 	void SetCharacterMovementValues();
 
 	UPROPERTY(EditAnywhere, Category = "IA")
@@ -47,13 +50,16 @@ private:
 	UPROPERTY(EditAnywhere, Category = "IA")
 	TObjectPtr<UInputAction> JumpIA;
 
+	UPROPERTY(EditAnywhere, Category = "IA")
+	TObjectPtr<UInputAction> LookIA;
+	
 	UPROPERTY(EditAnywhere, Category = "IMC")
 	TObjectPtr<UInputMappingContext> MainCharacterIMC;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCameraComponent> CameraComponent;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

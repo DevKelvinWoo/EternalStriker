@@ -20,7 +20,6 @@ AEternalStrikerMainCharacter::AEternalStrikerMainCharacter()
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComponent->SetupAttachment(RootComponent);
-	SpringArmComponent->TargetArmLength = 400.f;
 	SpringArmComponent->bUsePawnControlRotation = true;
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -58,37 +57,38 @@ void AEternalStrikerMainCharacter::AddIMCAndBindActions(UInputComponent* InPlaye
 	UEnhancedInputLocalPlayerSubsystem* EnhancedInputLocalPlayerSubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
 	check(EnhancedInputLocalPlayerSubSystem);
 
-	if (ensureAlways(IsValid(MainCharacterIMC)))
-	{
-		EnhancedInputLocalPlayerSubSystem->AddMappingContext(MainCharacterIMC, 0);
-	}
+	check(MainCharacterIMC);
+	
+	EnhancedInputLocalPlayerSubSystem->AddMappingContext(MainCharacterIMC, 0);
 
-	if (ensureAlways(IsValid(MoveIA)))
-	{
-		EnhancedPlayerInputComponent->BindAction(MoveIA, ETriggerEvent::Triggered, this, &ThisClass::MoveCharacter);
-		EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Started, this, &ThisClass::RunCharacter);
-		EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Completed, this, &ThisClass::RunCharacter);
-		EnhancedPlayerInputComponent->BindAction(JumpIA, ETriggerEvent::Started, this, &ThisClass::JumpCharacter);
-	}
+	check(MoveIA && RunIA && JumpIA && LookIA);
+
+	EnhancedPlayerInputComponent->BindAction(MoveIA, ETriggerEvent::Triggered, this, &ThisClass::MoveCharacter);
+	EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Started, this, &ThisClass::RunCharacter);
+	EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Completed, this, &ThisClass::RunCharacter);
+	EnhancedPlayerInputComponent->BindAction(JumpIA, ETriggerEvent::Started, this, &ThisClass::JumpCharacter);
+	EnhancedPlayerInputComponent->BindAction(LookIA, ETriggerEvent::Triggered, this, &ThisClass::LookCharacter);
 }
 
 void AEternalStrikerMainCharacter::MoveCharacter(const FInputActionValue& InActionValue)
 {
 	check(Controller);
 
-	if (bCanMove)
+	if (!bCanMove)
 	{
-		const FVector2D& MovementVector = InActionValue.Get<FVector2D>();
-
-		const FRotator& Rotation = Controller->GetControlRotation();
-		const FRotator& YawRotation = FRotator(0, Rotation.Yaw, 0);
-
-		const FVector& ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		const FVector& RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
+		return;
 	}
+
+	const FVector2D& MovementVector = InActionValue.Get<FVector2D>();
+
+	const FRotator& Rotation = Controller->GetControlRotation();
+	const FRotator& YawRotation = FRotator(0, Rotation.Yaw, 0);
+
+	const FVector& ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector& RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(ForwardDirection, MovementVector.Y);
+	AddMovementInput(RightDirection, MovementVector.X);
 }
 
 void AEternalStrikerMainCharacter::RunCharacter(const FInputActionValue& InActionValue)
@@ -121,6 +121,23 @@ void AEternalStrikerMainCharacter::JumpCharacter(const FInputActionValue& InActi
 	{
 		Jump();
 	}
+}
+
+void AEternalStrikerMainCharacter::LookCharacter(const FInputActionValue& InActionValue)
+{
+	check(Controller);
+
+	const bool bInputLookAtKey = InActionValue.IsNonZero();
+
+	if (!bInputLookAtKey)
+	{
+		return;
+	}
+
+	const FVector2D& LookAxisVector = InActionValue.Get<FVector2D>();
+	
+	AddControllerYawInput(LookAxisVector.X);
+	AddControllerPitchInput(LookAxisVector.Y);
 }
 
 void AEternalStrikerMainCharacter::SetCharacterMovementValues()
