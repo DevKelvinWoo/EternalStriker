@@ -68,7 +68,7 @@ void AEternalStrikerMainCharacter::AddIMCAndBindActions(UInputComponent* InPlaye
 		EnhancedPlayerInputComponent->BindAction(MoveIA, ETriggerEvent::Triggered, this, &ThisClass::MoveCharacter);
 		EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Started, this, &ThisClass::RunCharacter);
 		EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Completed, this, &ThisClass::RunCharacter);
-		EnhancedPlayerInputComponent->BindAction(JumpIA, ETriggerEvent::Started, this, &ThisClass::Jump);
+		EnhancedPlayerInputComponent->BindAction(JumpIA, ETriggerEvent::Started, this, &ThisClass::JumpCharacter);
 	}
 }
 
@@ -106,6 +106,20 @@ void AEternalStrikerMainCharacter::RunCharacter(const FInputActionValue& InActio
 	{
 		bIsRunning = false;
 		MovementComponent->MaxWalkSpeed = MaxWalkSpeed;
+	}
+}
+
+void AEternalStrikerMainCharacter::JumpCharacter(const FInputActionValue& InActionValue)
+{
+	if (bIsRunning || bRecoveringJump)
+	{
+		return;
+	}
+
+	const bool bInputJumpKey = InActionValue.IsNonZero();
+	if (bInputJumpKey)
+	{
+		Jump();
 	}
 }
 

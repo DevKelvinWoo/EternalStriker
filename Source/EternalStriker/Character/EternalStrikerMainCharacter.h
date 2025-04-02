@@ -33,6 +33,9 @@ private:
 	UFUNCTION()
 	void RunCharacter(const FInputActionValue& InActionValue);
 
+	UFUNCTION()
+	void JumpCharacter(const FInputActionValue& InActionValue);
+
 	void SetCharacterMovementValues();
 
 	UPROPERTY(EditAnywhere, Category = "IA")
@@ -56,12 +59,15 @@ private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool bIsRunning{ false };
 
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bCanMove{ true };
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bRecoveringJump{ false };
+
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float MaxRunSpeed{ 950.f };
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float MaxWalkSpeed{ 550.f };
-
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	bool bCanMove{ true };
 };
