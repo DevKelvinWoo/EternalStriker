@@ -31,12 +31,15 @@ void UEternalCombatComponent::AttackBasic()
 
 void UEternalCombatComponent::IncreaseCurrentComboCount()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Increase"));
 	++CurrentComboCount;
+
+	if (CurrentComboCount > FullComboCount)
+	{
+		CurrentComboCount = 0;
+	}
 }
 
 void UEternalCombatComponent::ResetCurrentComboCount()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Reset"));
 	CurrentComboCount = 0;
 }

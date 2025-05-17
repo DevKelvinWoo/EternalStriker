@@ -1,8 +1,6 @@
 
 #include "EternalStrikerMainCharacter.h"
 
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -41,38 +39,6 @@ void AEternalStrikerMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-void AEternalStrikerMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	AddIMCAndBindActions(PlayerInputComponent);
-}
-
-void AEternalStrikerMainCharacter::AddIMCAndBindActions(UInputComponent* InPlayerInputComponent)
-{
-	UEnhancedInputComponent* EnhancedPlayerInputComponent = Cast<UEnhancedInputComponent>(InPlayerInputComponent);
-	check(EnhancedPlayerInputComponent);
-
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	check(PlayerController);
-
-	UEnhancedInputLocalPlayerSubsystem* EnhancedInputLocalPlayerSubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-	check(EnhancedInputLocalPlayerSubSystem);
-
-	ensureAlways(MainCharacterIMC);
-	
-	EnhancedInputLocalPlayerSubSystem->AddMappingContext(MainCharacterIMC, 0);
-
-	ensureAlways(MoveIA && RunIA && JumpIA && LookIA && AttackIA);
-
-	EnhancedPlayerInputComponent->BindAction(MoveIA, ETriggerEvent::Triggered, this, &ThisClass::MoveCharacter);
-	EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Started, this, &ThisClass::RunCharacter);
-	EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Completed, this, &ThisClass::RunCharacter);
-	EnhancedPlayerInputComponent->BindAction(JumpIA, ETriggerEvent::Started, this, &ThisClass::JumpCharacter);
-	EnhancedPlayerInputComponent->BindAction(LookIA, ETriggerEvent::Triggered, this, &ThisClass::LookCharacter);
-	EnhancedPlayerInputComponent->BindAction(AttackIA, ETriggerEvent::Started, this, &ThisClass::AttackBasic);
 }
 
 void AEternalStrikerMainCharacter::MoveCharacter(const FInputActionValue& InActionValue)
