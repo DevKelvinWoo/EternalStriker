@@ -11,6 +11,8 @@ class UInputMappingContext;
 class USpringArmComponent;
 class UCameraComponent;
 
+class UEternalCombatComponent;
+
 UCLASS()
 class ETERNALSTRIKER_API AEternalStrikerMainCharacter : public ACharacter
 {
@@ -18,6 +20,8 @@ class ETERNALSTRIKER_API AEternalStrikerMainCharacter : public ACharacter
 
 public:
 	AEternalStrikerMainCharacter();
+
+	UEternalCombatComponent* GetCombatComponent() { return CombatComponent; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -39,6 +43,9 @@ private:
 	UFUNCTION()
 	void LookCharacter(const FInputActionValue& InActionValue);
 
+	UFUNCTION()
+	void AttackBasic(const FInputActionValue& InActionValue);
+
 	void SetCharacterMovementValues();
 
 	UPROPERTY(EditAnywhere, Category = "IA")
@@ -53,6 +60,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "IA")
 	TObjectPtr<UInputAction> LookIA;
 	
+	UPROPERTY(EditAnywhere, Category = "IA")
+	TObjectPtr<UInputAction> AttackIA;
+
 	UPROPERTY(EditAnywhere, Category = "IMC")
 	TObjectPtr<UInputMappingContext> MainCharacterIMC;
 
@@ -61,6 +71,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCameraComponent> CameraComponent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UEternalCombatComponent> CombatComponent;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool bIsRunning{ false };

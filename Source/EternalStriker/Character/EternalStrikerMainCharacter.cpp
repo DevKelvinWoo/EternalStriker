@@ -8,6 +8,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "EternalStriker/Component/EternalCombatComponent.h"
+
 AEternalStrikerMainCharacter::AEternalStrikerMainCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -25,6 +27,8 @@ AEternalStrikerMainCharacter::AEternalStrikerMainCharacter()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
+
+	CombatComponent = CreateDefaultSubobject<UEternalCombatComponent>(TEXT("CombatComponent"));
 }
 
 void AEternalStrikerMainCharacter::BeginPlay()
@@ -57,17 +61,18 @@ void AEternalStrikerMainCharacter::AddIMCAndBindActions(UInputComponent* InPlaye
 	UEnhancedInputLocalPlayerSubsystem* EnhancedInputLocalPlayerSubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
 	check(EnhancedInputLocalPlayerSubSystem);
 
-	check(MainCharacterIMC);
+	ensureAlways(MainCharacterIMC);
 	
 	EnhancedInputLocalPlayerSubSystem->AddMappingContext(MainCharacterIMC, 0);
 
-	check(MoveIA && RunIA && JumpIA && LookIA);
+	ensureAlways(MoveIA && RunIA && JumpIA && LookIA && AttackIA);
 
 	EnhancedPlayerInputComponent->BindAction(MoveIA, ETriggerEvent::Triggered, this, &ThisClass::MoveCharacter);
 	EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Started, this, &ThisClass::RunCharacter);
 	EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Completed, this, &ThisClass::RunCharacter);
 	EnhancedPlayerInputComponent->BindAction(JumpIA, ETriggerEvent::Started, this, &ThisClass::JumpCharacter);
 	EnhancedPlayerInputComponent->BindAction(LookIA, ETriggerEvent::Triggered, this, &ThisClass::LookCharacter);
+	EnhancedPlayerInputComponent->BindAction(AttackIA, ETriggerEvent::Started, this, &ThisClass::AttackBasic);
 }
 
 void AEternalStrikerMainCharacter::MoveCharacter(const FInputActionValue& InActionValue)
@@ -138,6 +143,17 @@ void AEternalStrikerMainCharacter::LookCharacter(const FInputActionValue& InActi
 	
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AEternalStrikerMainCharacter::AttackBasic(const FInputActionValue& InActionValue)
+{
+	check(CombatComponent);
+
+	const bool bInputAttackBasicKey = InActionValue.IsNonZero();
+	if (bInputAttackBasicKey)
+	{
+		CombatComponent->AttackBasic();
+	}
 }
 
 void AEternalStrikerMainCharacter::SetCharacterMovementValues()
