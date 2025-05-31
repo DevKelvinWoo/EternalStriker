@@ -9,7 +9,7 @@
 
 void UEternalKnightAnimInstance::AnimNotify_ResetComboCount()
 {
-	AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	const AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
 	check(OwnerKnight);
 
 	UEternalCombatComponent* OwnerKnightCombatComponent{ OwnerKnight->GetCombatComponent() };
@@ -20,7 +20,7 @@ void UEternalKnightAnimInstance::AnimNotify_ResetComboCount()
 
 void UEternalKnightAnimInstance::AnimNotify_IncreaseComboCount()
 {
-	AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	const AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
 	check(OwnerKnight);
 
 	UEternalCombatComponent* OwnerKnightCombatComponent{ OwnerKnight->GetCombatComponent() };
@@ -31,7 +31,7 @@ void UEternalKnightAnimInstance::AnimNotify_IncreaseComboCount()
 
 void UEternalKnightAnimInstance::AnimNotify_SetCanAttackState()
 {
-	AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	const AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
 	check(OwnerKnight);
 
 	UEternalCombatComponent* OwnerKnightCombatComponent{ OwnerKnight->GetCombatComponent() };
@@ -42,7 +42,7 @@ void UEternalKnightAnimInstance::AnimNotify_SetCanAttackState()
 
 void UEternalKnightAnimInstance::AnimNotify_SetCannotAttackState()
 {
-	AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	const AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
 	check(OwnerKnight);
 
 	UEternalCombatComponent* OwnerKnightCombatComponent{ OwnerKnight->GetCombatComponent() };
@@ -53,10 +53,10 @@ void UEternalKnightAnimInstance::AnimNotify_SetCannotAttackState()
 
 void UEternalKnightAnimInstance::AnimNotify_EquipWeapon()
 {
-	AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	const AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
 	check(OwnerKnight);
 
-	UEternalEquipComponent* OwnerKnightEquipComponent{ OwnerKnight->GetEquipComponent() };
+	const UEternalEquipComponent* OwnerKnightEquipComponent{ OwnerKnight->GetEquipComponent() };
 	check(OwnerKnightEquipComponent);
 
 	OwnerKnightEquipComponent->AttachWeaponToSocket();

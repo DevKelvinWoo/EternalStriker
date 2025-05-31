@@ -17,17 +17,19 @@ class ETERNALSTRIKER_API UEternalEquipComponent : public UActorComponent
 	//장착 시전 시 재생할 AnimMontage
 
 public:
-	const AEternalStrikerWeapon* GetEquippedWeapon() const { return EquippedWeapon; }
-	void SetEquippedWeapon(AEternalStrikerWeapon* InWeapon) { EquippedWeapon = InWeapon; };
+	const AEternalStrikerWeapon* GetEquippedWeapon() const;
+	void SetEquippedWeapon(AEternalStrikerWeapon* InWeapon);
 
-	void EquipWeapon() const;
+	void EquipWeapon();
 
 	void AttachWeaponToSocket() const;
+
+	void SetEquipableWeapon(AEternalStrikerWeapon* InEquipableWeapon);
 
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAnimMontage> EquipAnimMontage;
 
-	UPROPERTY(Transient)
-	TObjectPtr<AEternalStrikerWeapon> EquippedWeapon;
+	TWeakObjectPtr<AEternalStrikerWeapon> EquipableWeapon;
+	TWeakObjectPtr<AEternalStrikerWeapon> EquippedWeapon;
 };

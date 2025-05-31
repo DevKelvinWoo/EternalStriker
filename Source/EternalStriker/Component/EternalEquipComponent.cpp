@@ -3,12 +3,48 @@
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
 #include "EternalStriker//Weapon/EternalStrikerWeapon.h"
 
-void UEternalEquipComponent::EquipWeapon() const
+const AEternalStrikerWeapon* UEternalEquipComponent::GetEquippedWeapon() const
+{
+	if (!EquippedWeapon.IsValid())
+	{
+		return nullptr;
+	}
+
+	return EquippedWeapon.Get();
+}
+
+void UEternalEquipComponent::SetEquippedWeapon(AEternalStrikerWeapon* InWeapon)
+{
+	if (!ensureAlways(IsValid(InWeapon)))
+	{
+		return;
+	}
+
+	EquippedWeapon = MakeWeakObjectPtr(InWeapon);
+}
+
+void UEternalEquipComponent::EquipWeapon()
 {
 	if (!ensureAlways(EquipAnimMontage))
 	{
 		return;
 	}
+
+	if (!EquipableWeapon.IsValid())
+	{
+		return;
+	}
+
+	if (EquippedWeapon.IsValid())
+	{
+		EquippedWeapon->Destroy();
+		EquippedWeapon.Reset();
+	}
+
+	EquippedWeapon = EquipableWeapon;
+	EquipableWeapon.Reset();
+
+	EquippedWeapon->SetWeaponEquipCollision(ECollisionEnabled::NoCollision);
 
 	const AEternalStrikerMainCharacter* OwnerCharacter{ Cast<AEternalStrikerMainCharacter>(GetOwner()) };
 	check(OwnerCharacter);
@@ -25,7 +61,7 @@ void UEternalEquipComponent::EquipWeapon() const
 
 void UEternalEquipComponent::AttachWeaponToSocket() const
 {
-	if (!ensureAlways(IsValid(EquippedWeapon)))
+	if (!EquippedWeapon.IsValid())
 	{
 		return;
 	}
@@ -36,5 +72,17 @@ void UEternalEquipComponent::AttachWeaponToSocket() const
 	USkeletalMeshComponent* OwnerCharacterMesh{ OwnerCharacter->GetMesh() };
 	check(OwnerCharacterMesh);
 
-	EquippedWeapon->AttachToComponent(OwnerCharacterMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+	AEternalStrikerWeapon* WeaponToAttach{ EquippedWeapon.Get() };
+	const FTransform& InitialWeaponTransform{ FRotator::ZeroRotator, FVector::ZeroVector, FVector::OneVector };
+
+	WeaponToAttach->SetActorTransform(InitialWeaponTransform);
+
+	const FAttachmentTransformRules WeaponAttachmentRules(EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, true);
+	const FName& WeaponSocketName{ TEXT("WeaponSocket") };
+	WeaponToAttach->AttachToComponent(OwnerCharacterMesh, WeaponAttachmentRules, WeaponSocketName);
+}
+
+void UEternalEquipComponent::SetEquipableWeapon(AEternalStrikerWeapon* InEquipableWeapon)
+{
+	EquipableWeapon = MakeWeakObjectPtr(InEquipableWeapon);
 }

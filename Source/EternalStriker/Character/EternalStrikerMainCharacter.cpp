@@ -8,6 +8,7 @@
 
 #include "EternalStriker/Component/EternalCombatComponent.h"
 #include "EternalStriker/Component/EternalEquipComponent.h"
+#include "EternalStriker//Weapon/EternalStrikerWeapon.h"
 
 AEternalStrikerMainCharacter::AEternalStrikerMainCharacter()
 {
@@ -151,4 +152,10 @@ void AEternalStrikerMainCharacter::SetCharacterMovementValues()
 	MovementComponent->BrakingDecelerationFalling = 1500.0f;
 	MovementComponent->JumpZVelocity = 450.f;
 	MovementComponent->GravityScale = 1.5f;
+}
+
+void AEternalStrikerMainCharacter::SetEquipableWeapon(AEternalStrikerWeapon* InEquipableWeapon)
+{
+	check(EquipComponent);
+	EquipComponent->SetEquipableWeapon(InEquipableWeapon);
 }

@@ -28,6 +28,8 @@ class ETERNALSTRIKER_API AEternalStrikerWeapon : public AActor
 public:
 	AEternalStrikerWeapon();
 
+	void SetWeaponEquipCollision(ECollisionEnabled::Type InCollisionEnabled);
+
 protected:
 	virtual void BeginPlay() override;
 

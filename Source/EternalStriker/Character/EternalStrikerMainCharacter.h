@@ -10,6 +10,7 @@ class UCameraComponent;
 
 class UEternalCombatComponent;
 class UEternalEquipComponent;
+class AEternalStrikerWeapon;
 
 UCLASS()
 class ETERNALSTRIKER_API AEternalStrikerMainCharacter : public ACharacter
@@ -34,6 +35,8 @@ public:
 	void AttackBasic(const FInputActionValue& InActionValue);
 	UFUNCTION()
 	void EquipWeapon(const FInputActionValue& InActionValue);
+
+	void SetEquipableWeapon(AEternalStrikerWeapon* InEquipableWeapon);
 
 protected:
 	virtual void BeginPlay() override;

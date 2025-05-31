@@ -7,6 +7,7 @@
 #include "Engine/DataAsset.h"
 
 #include "EternalStriker/Data/EternalWeaponData.h"
+#include "EternalStriker/Character/EternalStrikerMainCharacter.h"
 
 AEternalStrikerWeapon::AEternalStrikerWeapon()
 {
@@ -24,6 +25,12 @@ AEternalStrikerWeapon::AEternalStrikerWeapon()
 
 	WeaponEquipCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::HandleOnWeaponEquipCollisionBeginOverlap);
 	WeaponEquipCollision->OnComponentEndOverlap.AddDynamic(this, &ThisClass::HandleOnWeaponEquipCollisionEndOverlap);
+}
+
+void AEternalStrikerWeapon::SetWeaponEquipCollision(ECollisionEnabled::Type InCollisionEnabled)
+{
+	check(WeaponEquipCollision);
+	WeaponEquipCollision->SetCollisionEnabled(InCollisionEnabled);
 }
 
 void AEternalStrikerWeapon::BeginPlay()
@@ -57,10 +64,22 @@ void AEternalStrikerWeapon::InitializeWeaponData()
 
 void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Equip Collision Overlap"));
+	AEternalStrikerMainCharacter* HitCharacter{ Cast<AEternalStrikerMainCharacter>(OtherActor) };
+	if (!IsValid(HitCharacter))
+	{
+		return;
+	}
+
+	HitCharacter->SetEquipableWeapon(this);
 }
 
 void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Equip Collision End Overlap"));
+	AEternalStrikerMainCharacter* HitCharacter{ Cast<AEternalStrikerMainCharacter>(OtherActor) };
+	if (!IsValid(HitCharacter))
+	{
+		return;
+	}
+
+	HitCharacter->SetEquipableWeapon(nullptr);
 }
