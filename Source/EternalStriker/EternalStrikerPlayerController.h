@@ -34,6 +34,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "IA")
 	TObjectPtr<UInputAction> AttackIA;
 
+	UPROPERTY(EditAnywhere, Category = "IA")
+	TObjectPtr<UInputAction> EquipIA;
+
 	UPROPERTY(EditAnywhere, Category = "IMC")
 	TObjectPtr<UInputMappingContext> MainCharacterIMC;
 
@@ -49,6 +52,8 @@ private:
 	void HandleOnLookIATriggered(const FInputActionValue& InActionValue);
 	UFUNCTION()
 	void HandleOnAttackIAStarted(const FInputActionValue& InActionValue);
+	UFUNCTION()
+	void HandleOnEquipIAStarted(const FInputActionValue& InActionValue);
 
 	void AddIMCAndBindActions();
 

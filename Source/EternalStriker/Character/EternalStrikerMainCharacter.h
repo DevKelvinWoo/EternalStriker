@@ -9,6 +9,7 @@ class USpringArmComponent;
 class UCameraComponent;
 
 class UEternalCombatComponent;
+class UEternalEquipComponent;
 
 UCLASS()
 class ETERNALSTRIKER_API AEternalStrikerMainCharacter : public ACharacter
@@ -18,7 +19,8 @@ class ETERNALSTRIKER_API AEternalStrikerMainCharacter : public ACharacter
 public:
 	AEternalStrikerMainCharacter();
 
-	UEternalCombatComponent* GetCombatComponent() { return CombatComponent; }
+	UEternalCombatComponent* GetCombatComponent() const { return CombatComponent; }
+	UEternalEquipComponent* GetEquipComponent() const { return EquipComponent; }
 
 	UFUNCTION()
 	void MoveCharacter(const FInputActionValue& InActionValue);
@@ -30,6 +32,8 @@ public:
 	void LookCharacter(const FInputActionValue& InActionValue);
 	UFUNCTION()
 	void AttackBasic(const FInputActionValue& InActionValue);
+	UFUNCTION()
+	void EquipWeapon(const FInputActionValue& InActionValue);
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,6 +50,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UEternalCombatComponent> CombatComponent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UEternalEquipComponent> EquipComponent;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool bIsRunning{ false };

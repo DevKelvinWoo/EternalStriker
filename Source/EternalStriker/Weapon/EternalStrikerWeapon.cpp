@@ -2,6 +2,7 @@
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/DataAsset.h"
 
@@ -17,6 +18,12 @@ AEternalStrikerWeapon::AEternalStrikerWeapon()
 
 	WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollision"));
 	WeaponCollision->SetupAttachment(WeaponSkeletalMesh);
+
+	WeaponEquipCollision = CreateDefaultSubobject<USphereComponent>(TEXT("WeaponEquipCollision"));
+	WeaponEquipCollision->SetupAttachment(RootComponent);
+
+	WeaponEquipCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::HandleOnWeaponEquipCollisionBeginOverlap);
+	WeaponEquipCollision->OnComponentEndOverlap.AddDynamic(this, &ThisClass::HandleOnWeaponEquipCollisionEndOverlap);
 }
 
 void AEternalStrikerWeapon::BeginPlay()
@@ -46,4 +53,14 @@ void AEternalStrikerWeapon::InitializeWeaponData()
 	WeaponHitSound = WeaponDataStruct.WeaponHitSoundWaveData;
 
 	WeaponCategory = WeaponDataStruct.WeaponCategoryData;
+}
+
+void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Equip Collision Overlap"));
+}
+
+void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Equip Collision End Overlap"));
 }

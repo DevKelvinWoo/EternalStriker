@@ -14,10 +14,10 @@ void UEternalCombatComponent::AttackBasic()
 		return;
 	}
 
-	AEternalStrikerMainCharacter* OwnerCharacter{ Cast<AEternalStrikerMainCharacter>(GetOwner()) };
+	const AEternalStrikerMainCharacter* OwnerCharacter{ Cast<AEternalStrikerMainCharacter>(GetOwner()) };
 	check(OwnerCharacter);
 
-	USkeletalMeshComponent* OwnerCharacterMesh{ OwnerCharacter->GetMesh() };
+	const USkeletalMeshComponent* OwnerCharacterMesh{ OwnerCharacter->GetMesh() };
 	check(OwnerCharacterMesh);
 
 	UAnimInstance* OwnerCharacterAnimInstance{ OwnerCharacterMesh->GetAnimInstance() };

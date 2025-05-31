@@ -6,6 +6,7 @@
 
 class USkeletalMeshComponent;
 class UBoxComponent;
+class USphereComponent;
 class UNiagaraSystem;
 class USoundWave;
 
@@ -33,11 +34,20 @@ protected:
 private:
 	void InitializeWeaponData();
 
+	UFUNCTION()
+	void HandleOnWeaponEquipCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void HandleOnWeaponEquipCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TObjectPtr<USkeletalMeshComponent> WeaponSkeletalMesh;
 
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TObjectPtr<UBoxComponent> WeaponCollision;
+
+	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
+	TObjectPtr<USphereComponent> WeaponEquipCollision;
 
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TObjectPtr<UEternalWeaponData> WeaponData;

@@ -23,4 +23,7 @@ public:
 
 	UFUNCTION()
 	void AnimNotify_SetCannotAttackState();
+
+	UFUNCTION()
+	void AnimNotify_EquipWeapon();
 };

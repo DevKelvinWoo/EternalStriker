@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "EternalStriker/Component/EternalCombatComponent.h"
+#include "EternalStriker/Component/EternalEquipComponent.h"
 
 AEternalStrikerMainCharacter::AEternalStrikerMainCharacter()
 {
@@ -27,6 +28,7 @@ AEternalStrikerMainCharacter::AEternalStrikerMainCharacter()
 	CameraComponent->bUsePawnControlRotation = false;
 
 	CombatComponent = CreateDefaultSubobject<UEternalCombatComponent>(TEXT("CombatComponent"));
+	EquipComponent = CreateDefaultSubobject<UEternalEquipComponent>(TEXT("EquipComponent"));
 }
 
 void AEternalStrikerMainCharacter::BeginPlay()
@@ -119,6 +121,17 @@ void AEternalStrikerMainCharacter::AttackBasic(const FInputActionValue& InAction
 	if (bInputAttackBasicKey)
 	{
 		CombatComponent->AttackBasic();
+	}
+}
+
+void AEternalStrikerMainCharacter::EquipWeapon(const FInputActionValue& InActionValue)
+{
+	check(EquipComponent);
+
+	const bool bInputEquipWeaponKey = InActionValue.IsNonZero();
+	if (bInputEquipWeaponKey)
+	{
+		EquipComponent->EquipWeapon();
 	}
 }
 

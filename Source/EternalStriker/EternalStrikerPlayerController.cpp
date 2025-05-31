@@ -33,7 +33,7 @@ void AEternalStrikerPlayerController::AddIMCAndBindActions()
 
 	EnhancedInputLocalPlayerSubSystem->AddMappingContext(MainCharacterIMC, 0);
 
-	ensureAlways(MoveIA && RunIA && JumpIA && LookIA && AttackIA);
+	ensureAlways(MoveIA && RunIA && JumpIA && LookIA && AttackIA && EquipIA);
 
 	EnhancedPlayerInputComponent->BindAction(MoveIA, ETriggerEvent::Triggered, this, &ThisClass::HandleOnMoveIATriggered);
 	EnhancedPlayerInputComponent->BindAction(RunIA, ETriggerEvent::Started, this, &ThisClass::HandleOnRunIAStarted);
@@ -41,6 +41,7 @@ void AEternalStrikerPlayerController::AddIMCAndBindActions()
 	EnhancedPlayerInputComponent->BindAction(JumpIA, ETriggerEvent::Started, this, &ThisClass::HandleOnJumpIAStarted);
 	EnhancedPlayerInputComponent->BindAction(LookIA, ETriggerEvent::Triggered, this, &ThisClass::HandleOnLookIATriggered);
 	EnhancedPlayerInputComponent->BindAction(AttackIA, ETriggerEvent::Started, this, &ThisClass::HandleOnAttackIAStarted);
+	EnhancedPlayerInputComponent->BindAction(EquipIA, ETriggerEvent::Started, this, &ThisClass::HandleOnEquipIAStarted);
 }
 
 void AEternalStrikerPlayerController::HandleOnMoveIATriggered(const FInputActionValue& InActionValue)
@@ -101,4 +102,14 @@ void AEternalStrikerPlayerController::HandleOnAttackIAStarted(const FInputAction
 	}
 
 	EternalStirkerMainCharacter->AttackBasic(InActionValue);
+}
+
+void AEternalStrikerPlayerController::HandleOnEquipIAStarted(const FInputActionValue& InActionValue)
+{
+	if (!ensureAlways(IsValid(EternalStirkerMainCharacter)))
+	{
+		return;
+	}
+
+	EternalStirkerMainCharacter->EquipWeapon(InActionValue);
 }

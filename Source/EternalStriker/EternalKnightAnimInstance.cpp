@@ -5,6 +5,7 @@
 
 #include "EternalStriker/Character/EternalStrikerKnight.h"
 #include "EternalStriker/Component/EternalCombatComponent.h"
+#include "EternalStriker/Component/EternalEquipComponent.h"
 
 void UEternalKnightAnimInstance::AnimNotify_ResetComboCount()
 {
@@ -48,4 +49,15 @@ void UEternalKnightAnimInstance::AnimNotify_SetCannotAttackState()
 	check(OwnerKnightCombatComponent);
 
 	OwnerKnightCombatComponent->SetCanAttackState(false);
+}
+
+void UEternalKnightAnimInstance::AnimNotify_EquipWeapon()
+{
+	AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	check(OwnerKnight);
+
+	UEternalEquipComponent* OwnerKnightEquipComponent{ OwnerKnight->GetEquipComponent() };
+	check(OwnerKnightEquipComponent);
+
+	OwnerKnightEquipComponent->AttachWeaponToSocket();
 }
