@@ -1,6 +1,8 @@
 #include "EternalCombatComponent.h"
 
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
+#include "EternalStriker/Component/EternalEquipComponent.h"
+#include "EternalStriker/Weapon/EternalStrikerWeapon.h"
 
 void UEternalCombatComponent::AttackBasic()
 {
@@ -16,6 +18,15 @@ void UEternalCombatComponent::AttackBasic()
 
 	const AEternalStrikerMainCharacter* OwnerCharacter{ Cast<AEternalStrikerMainCharacter>(GetOwner()) };
 	check(OwnerCharacter);
+
+	const UEternalEquipComponent* OwnerCharacterEquipComponent{ OwnerCharacter->GetEquipComponent() };
+	check(OwnerCharacterEquipComponent);
+
+	const AEternalStrikerWeapon* EquippedWeapon{ OwnerCharacterEquipComponent->GetEquippedWeapon() };
+	if (!IsValid(EquippedWeapon))
+	{
+		return;
+	}
 
 	const USkeletalMeshComponent* OwnerCharacterMesh{ OwnerCharacter->GetMesh() };
 	check(OwnerCharacterMesh);

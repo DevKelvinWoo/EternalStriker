@@ -17,7 +17,7 @@ class ETERNALSTRIKER_API UEternalEquipComponent : public UActorComponent
 	//장착 시전 시 재생할 AnimMontage
 
 public:
-	const AEternalStrikerWeapon* GetEquippedWeapon() const;
+	AEternalStrikerWeapon* GetEquippedWeapon() const;
 	void SetEquippedWeapon(AEternalStrikerWeapon* InWeapon);
 
 	void EquipWeapon();

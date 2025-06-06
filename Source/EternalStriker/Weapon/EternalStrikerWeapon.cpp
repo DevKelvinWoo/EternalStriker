@@ -5,6 +5,8 @@
 #include "Components/SphereComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/DataAsset.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/DamageType.h"
 
 #include "EternalStriker/Data/EternalWeaponData.h"
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
@@ -19,6 +21,9 @@ AEternalStrikerWeapon::AEternalStrikerWeapon()
 
 	WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollision"));
 	WeaponCollision->SetupAttachment(WeaponSkeletalMesh);
+	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::HandleOnWeaponCollisionBeginOverlap);
 
 	WeaponEquipCollision = CreateDefaultSubobject<USphereComponent>(TEXT("WeaponEquipCollision"));
 	WeaponEquipCollision->SetupAttachment(RootComponent);
@@ -31,6 +36,12 @@ void AEternalStrikerWeapon::SetWeaponEquipCollision(ECollisionEnabled::Type InCo
 {
 	check(WeaponEquipCollision);
 	WeaponEquipCollision->SetCollisionEnabled(InCollisionEnabled);
+}
+
+void AEternalStrikerWeapon::SetWeaponCollision(ECollisionEnabled::Type InCollisionEnabled)
+{
+	check(WeaponCollision);
+	WeaponCollision->SetCollisionEnabled(InCollisionEnabled);
 }
 
 void AEternalStrikerWeapon::BeginPlay()
@@ -82,4 +93,15 @@ void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionEndOverlap(UPrimitiveCom
 	}
 
 	HitCharacter->SetEquipableWeapon(nullptr);
+}
+
+void AEternalStrikerWeapon::HandleOnWeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!IsValid(OtherActor))
+	{
+		return;
+	}
+
+	//@TODO : Character의 Stat이 구현되면 Stat에 AttackPower or MagicPower를 곱해서 데미지를 전달해야 함
+	UGameplayStatics::ApplyDamage(OtherActor, AttackPower, GetInstigatorController(), this, UDamageType::StaticClass());
 }

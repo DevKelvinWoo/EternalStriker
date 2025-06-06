@@ -6,6 +6,7 @@
 #include "EternalStriker/Character/EternalStrikerKnight.h"
 #include "EternalStriker/Component/EternalCombatComponent.h"
 #include "EternalStriker/Component/EternalEquipComponent.h"
+#include "EternalStriker/Weapon/EternalStrikerWeapon.h"
 
 void UEternalKnightAnimInstance::AnimNotify_ResetComboCount()
 {
@@ -60,4 +61,32 @@ void UEternalKnightAnimInstance::AnimNotify_EquipWeapon()
 	check(OwnerKnightEquipComponent);
 
 	OwnerKnightEquipComponent->AttachWeaponToSocket();
+}
+
+void UEternalKnightAnimInstance::AnimNotify_EnableWeaponCollision()
+{
+	const AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	check(OwnerKnight);
+
+	UEternalEquipComponent* OwnerKnightEquipComponent{ OwnerKnight->GetEquipComponent() };
+	check(OwnerKnightEquipComponent);
+
+	AEternalStrikerWeapon* EquippedWeapon{ OwnerKnightEquipComponent->GetEquippedWeapon() };
+	check(EquippedWeapon);
+
+	EquippedWeapon->SetWeaponCollision(ECollisionEnabled::QueryAndPhysics);
+}
+
+void UEternalKnightAnimInstance::AnimNotify_DisableWeaponCollision()
+{
+	const AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	check(OwnerKnight);
+
+	UEternalEquipComponent* OwnerKnightEquipComponent{ OwnerKnight->GetEquipComponent() };
+	check(OwnerKnightEquipComponent);
+
+	AEternalStrikerWeapon* EquippedWeapon{ OwnerKnightEquipComponent->GetEquippedWeapon() };
+	check(EquippedWeapon);
+
+	EquippedWeapon->SetWeaponCollision(ECollisionEnabled::NoCollision);
 }

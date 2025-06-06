@@ -3,7 +3,7 @@
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
 #include "EternalStriker//Weapon/EternalStrikerWeapon.h"
 
-const AEternalStrikerWeapon* UEternalEquipComponent::GetEquippedWeapon() const
+AEternalStrikerWeapon* UEternalEquipComponent::GetEquippedWeapon() const
 {
 	if (!EquippedWeapon.IsValid())
 	{

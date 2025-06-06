@@ -26,4 +26,10 @@ public:
 
 	UFUNCTION()
 	void AnimNotify_EquipWeapon();
+
+	UFUNCTION()
+	void AnimNotify_EnableWeaponCollision();
+
+	UFUNCTION()
+	void AnimNotify_DisableWeaponCollision();
 };
