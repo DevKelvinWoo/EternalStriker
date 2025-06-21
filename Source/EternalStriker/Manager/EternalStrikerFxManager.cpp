@@ -8,6 +8,7 @@
 
 #include "EternalStriker/EternalStrikerDefaultSettings.h"
 #include "EternalStriker/Data/EternalFXData.h"
+#include "EternalStriker/Manager/EternalStrikerSoundManager.h"
 
 void UEternalStrikerFXManager::SpawnFXAndSoundByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const
 {
@@ -27,26 +28,38 @@ void UEternalStrikerFXManager::SpawnFXAndSoundByName(const FName& InFXName, TOpt
 		FXLocation = OptionalFXLocation.GetValue();
 	}
 	
+	UNiagaraSystem* FXNiagaraSystemData{ FXDataStruct.FXNiagaraSystemData };
+	const UEternalSoundData* SoundData{ FXDataStruct.SoundData };
+	const FVector& FXScaleData{ FXDataStruct.FXScaleData };
+	const FRotator& FXRotatorData{ FXDataStruct.FXRotationData };
+	const FName& FXSocketNameData{ FXDataStruct.FXSocketNameData };
+	const bool FXLoopingData{ FXDataStruct.bIsLooping };
+
 	if (IsValid(InTargetCharacter))
 	{
 		const USkeletalMeshComponent* SkeletalMesh{ InTargetCharacter->GetMesh() };
 		check(SkeletalMesh);
 
-		FXLocation = SkeletalMesh->GetSocketLocation(FXDataStruct.FXSocketNameData);
+		FXLocation = SkeletalMesh->GetSocketLocation(FXSocketNameData);
 	}
-	
+
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 		GetWorld(),
-		FXDataStruct.FXNiagaraSystemData,
+		FXNiagaraSystemData,
 		FXLocation,
-		FXDataStruct.FXRotationData,
-		FXDataStruct.FXScaleData,
+		FXRotatorData,
+		FXScaleData,
 		true,
 		true
 	);
 
-	//SoundManager구현 후 여기서 호출
-	UGameplayStatics::PlaySound2D(GetWorld(), FXDataStruct.FXSoundWaveData);
+	const UGameInstance* GameInstance = GetGameInstance();
+	check(GameInstance);
+
+	const UEternalStrikerSoundManager* SoundManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
+	check(SoundManager);
+
+	SoundManager->PlaySoundByDataAsset(SoundData);
 }
 
 UEternalFXData* UEternalStrikerFXManager::FindFXData(const FName& InFXName) const

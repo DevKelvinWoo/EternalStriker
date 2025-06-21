@@ -14,4 +14,7 @@ class ETERNALSTRIKER_API UEternalStrikerDefaultSettings : public UDeveloperSetti
 public:
 	UPROPERTY(config, EditAnywhere)
 	TSoftObjectPtr<UDataTable> FXDataTable;
+
+	UPROPERTY(config, EditAnywhere)
+	TSoftObjectPtr<UDataTable> SoundDataTable;
 };

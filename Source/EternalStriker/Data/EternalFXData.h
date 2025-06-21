@@ -8,6 +8,8 @@
 class UNiagaraSystem;
 class USoundWave;
 
+class UEternalSoundData;
+
 USTRUCT()
 struct FEternalFXDataStruct
 {
@@ -17,7 +19,7 @@ struct FEternalFXDataStruct
 	TObjectPtr<UNiagaraSystem> FXNiagaraSystemData;
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<USoundWave> FXSoundWaveData;
+	TObjectPtr<UEternalSoundData> SoundData;
 
 	//Niagara의 param과 연결하던가 해야할 듯
 	UPROPERTY(EditAnywhere)
