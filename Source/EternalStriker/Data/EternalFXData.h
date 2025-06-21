@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Engine/DataTable.h"
 #include "EternalFXData.generated.h"
 
 class UNiagaraSystem;
@@ -11,9 +12,6 @@ USTRUCT()
 struct FEternalFXDataStruct
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	FName FXNameData{ NAME_None };
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> FXNiagaraSystemData;
@@ -42,4 +40,13 @@ class ETERNALSTRIKER_API UEternalFXData : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 	FEternalFXDataStruct EternalFXDataStruct;
+};
+
+USTRUCT(BlueprintType)
+struct FEternalFXDataTableRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UEternalFXData> FXDataAsset;
 };

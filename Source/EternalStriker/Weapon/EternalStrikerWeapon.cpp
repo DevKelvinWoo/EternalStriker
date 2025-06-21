@@ -1,7 +1,6 @@
 #include "EternalStrikerWeapon.h"
 
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/DataAsset.h"
@@ -10,6 +9,8 @@
 
 #include "EternalStriker/Data/EternalWeaponData.h"
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
+#include "EternalStriker/Manager/EternalStrikerFXManager.h"
+#include "EternalStriker/Enemy/EternalStrikerEnemy.h"
 
 AEternalStrikerWeapon::AEternalStrikerWeapon()
 {
@@ -17,13 +18,7 @@ AEternalStrikerWeapon::AEternalStrikerWeapon()
 	RootComponent = RootSceneComponent;
 
 	WeaponSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponSkeletalMesh"));
-	WeaponSkeletalMesh->SetupAttachment(RootComponent);
-
-	WeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollision"));
-	WeaponCollision->SetupAttachment(WeaponSkeletalMesh);
-	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::HandleOnWeaponCollisionBeginOverlap);
+	WeaponSkeletalMesh->SetupAttachment(RootComponent);;
 
 	WeaponEquipCollision = CreateDefaultSubobject<USphereComponent>(TEXT("WeaponEquipCollision"));
 	WeaponEquipCollision->SetupAttachment(RootComponent);
@@ -38,10 +33,9 @@ void AEternalStrikerWeapon::SetWeaponEquipCollision(ECollisionEnabled::Type InCo
 	WeaponEquipCollision->SetCollisionEnabled(InCollisionEnabled);
 }
 
-void AEternalStrikerWeapon::SetWeaponCollision(ECollisionEnabled::Type InCollisionEnabled)
+void AEternalStrikerWeapon::SetWeaponReadyToAttack(const bool bReadyToAttack)
 {
-	check(WeaponCollision);
-	WeaponCollision->SetCollisionEnabled(InCollisionEnabled);
+	bWeaponReadyToAttack = bReadyToAttack;
 }
 
 void AEternalStrikerWeapon::BeginPlay()
@@ -49,6 +43,13 @@ void AEternalStrikerWeapon::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeWeaponData();
+}
+
+void AEternalStrikerWeapon::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	AttackByMultiLineTrace();
 }
 
 void AEternalStrikerWeapon::InitializeWeaponData()
@@ -95,13 +96,41 @@ void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionEndOverlap(UPrimitiveCom
 	HitCharacter->SetEquipableWeapon(nullptr);
 }
 
-void AEternalStrikerWeapon::HandleOnWeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AEternalStrikerWeapon::AttackByMultiLineTrace()
 {
-	if (!IsValid(OtherActor))
+	if (bWeaponReadyToAttack)
 	{
-		return;
-	}
+		FVector LineTraceStart{ GetActorLocation() };
+		FVector LineTraceEnd{ LineTraceStart + GetActorRightVector() * 100.f };
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1) };
+		LineTraceIgnoreActors.Add(this);
 
-	//@TODO : Character의 Stat이 구현되면 Stat에 AttackPower or MagicPower를 곱해서 데미지를 전달해야 함
-	UGameplayStatics::ApplyDamage(OtherActor, AttackPower, GetInstigatorController(), this, UDamageType::StaticClass());
+		TArray<FHitResult> OutHits;
+		UKismetSystemLibrary::LineTraceMultiForObjects(GetWorld(), LineTraceStart, LineTraceEnd, ObjectTypes, false, LineTraceIgnoreActors, EDrawDebugTrace::ForDuration, OutHits, true);
+
+		UGameInstance* GameInstance = GetGameInstance();
+		check(GameInstance);
+
+		UEternalStrikerFXManager* FXManager{ GameInstance->GetSubsystem<UEternalStrikerFXManager>() };
+		check(FXManager);
+
+		for (FHitResult HitResult : OutHits)
+		{
+			AActor* HitActor{ HitResult.GetActor() };
+			if (!IsValid(HitActor))
+			{
+				continue;
+			}
+
+			LineTraceIgnoreActors.AddUnique(HitActor);
+			FXManager->SpawnFXByName(WeaponHitFXName, TOptional<FVector>(HitResult.Location), nullptr);
+
+			//@TODO : Character의 Stat이 구현되면 Stat에 AttackPower or MagicPower를 곱해서 데미지를 전달해야 함
+			UGameplayStatics::ApplyDamage(HitActor, AttackPower, GetInstigatorController(), this, UDamageType::StaticClass());
+		}
+	}
+	else
+	{
+		LineTraceIgnoreActors.Empty();
+	}
 }

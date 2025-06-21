@@ -29,10 +29,11 @@ public:
 	AEternalStrikerWeapon();
 
 	void SetWeaponEquipCollision(ECollisionEnabled::Type InCollisionEnabled);
-	void SetWeaponCollision(ECollisionEnabled::Type InCollisionEnabled);
+	void SetWeaponReadyToAttack(const bool bReadyToAttack);
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 private:
 	void InitializeWeaponData();
@@ -43,20 +44,19 @@ private:
 	UFUNCTION()
 	void HandleOnWeaponEquipCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UFUNCTION()
-	void HandleOnWeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void AttackByMultiLineTrace();
 
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TObjectPtr<USkeletalMeshComponent> WeaponSkeletalMesh;
-
-	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
-	TObjectPtr<UBoxComponent> WeaponCollision;
 
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TObjectPtr<USphereComponent> WeaponEquipCollision;
 
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TObjectPtr<UEternalWeaponData> WeaponData;
+
+	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
+	FName WeaponHitFXName{};
 
 	UPROPERTY(Transient)
 	TObjectPtr<UNiagaraSystem> WeaponAuraNiagara;
@@ -74,5 +74,9 @@ private:
 	int32 MagicPower{};
 	int32 AdditionalSpeed{};
 
+	bool bWeaponReadyToAttack{ false };
+
 	EEternalWeaponCategory WeaponCategory{ EEternalWeaponCategory::None };
+
+	TArray<AActor*> LineTraceIgnoreActors;
 };

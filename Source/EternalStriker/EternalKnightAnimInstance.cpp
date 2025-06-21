@@ -74,7 +74,7 @@ void UEternalKnightAnimInstance::AnimNotify_EnableWeaponCollision()
 	AEternalStrikerWeapon* EquippedWeapon{ OwnerKnightEquipComponent->GetEquippedWeapon() };
 	check(EquippedWeapon);
 
-	EquippedWeapon->SetWeaponCollision(ECollisionEnabled::QueryAndPhysics);
+	EquippedWeapon->SetWeaponReadyToAttack(true);
 }
 
 void UEternalKnightAnimInstance::AnimNotify_DisableWeaponCollision()
@@ -88,5 +88,5 @@ void UEternalKnightAnimInstance::AnimNotify_DisableWeaponCollision()
 	AEternalStrikerWeapon* EquippedWeapon{ OwnerKnightEquipComponent->GetEquippedWeapon() };
 	check(EquippedWeapon);
 
-	EquippedWeapon->SetWeaponCollision(ECollisionEnabled::NoCollision);
+	EquippedWeapon->SetWeaponReadyToAttack(false);
 }
