@@ -8,6 +8,7 @@
 
 #include "EternalStriker/EternalStrikerDefaultSettings.h"
 #include "EternalStriker/Data/EternalFXData.h"
+#include "EternalStriker/Data/EternalSoundData.h"
 #include "EternalStriker/Manager/EternalStrikerSoundManager.h"
 
 void UEternalStrikerFXManager::SpawnFXAndSoundByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const
@@ -53,13 +54,16 @@ void UEternalStrikerFXManager::SpawnFXAndSoundByName(const FName& InFXName, TOpt
 		true
 	);
 
-	const UGameInstance* GameInstance = GetGameInstance();
-	check(GameInstance);
+	if (IsValid(SoundData))
+	{
+		const UGameInstance* GameInstance = GetGameInstance();
+		check(GameInstance);
 
-	const UEternalStrikerSoundManager* SoundManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
-	check(SoundManager);
+		const UEternalStrikerSoundManager* SoundManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
+		check(SoundManager);
 
-	SoundManager->PlaySoundByDataAsset(SoundData);
+		SoundManager->PlaySoundByDataAsset(SoundData);
+	}
 }
 
 UEternalFXData* UEternalStrikerFXManager::FindFXData(const FName& InFXName) const
