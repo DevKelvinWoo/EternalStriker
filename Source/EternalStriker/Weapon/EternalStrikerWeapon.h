@@ -58,6 +58,9 @@ private:
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	FName WeaponHitFXName{};
 
+	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
+	float AttackLineTraceLength{ 0.f };
+
 	UPROPERTY(Transient)
 	TObjectPtr<UNiagaraSystem> WeaponAuraNiagara;
 

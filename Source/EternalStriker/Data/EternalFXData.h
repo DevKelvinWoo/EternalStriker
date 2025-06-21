@@ -19,6 +19,7 @@ struct FEternalFXDataStruct
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundWave> FXSoundWaveData;
 
+	//Niagara의 param과 연결하던가 해야할 듯
 	UPROPERTY(EditAnywhere)
 	FVector FXScaleData{ 1.0f, 1.0f, 1.0f };
 

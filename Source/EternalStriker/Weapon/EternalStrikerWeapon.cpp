@@ -100,21 +100,21 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 {
 	if (bWeaponReadyToAttack)
 	{
-		FVector LineTraceStart{ GetActorLocation() };
-		FVector LineTraceEnd{ LineTraceStart + GetActorRightVector() * 100.f };
-		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1) };
+		const FVector& LineTraceStart{ GetActorLocation() };
+		const FVector& LineTraceEnd{ LineTraceStart + GetActorRightVector() * AttackLineTraceLength };
+		const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1) };
 		LineTraceIgnoreActors.Add(this);
 
 		TArray<FHitResult> OutHits;
 		UKismetSystemLibrary::LineTraceMultiForObjects(GetWorld(), LineTraceStart, LineTraceEnd, ObjectTypes, false, LineTraceIgnoreActors, EDrawDebugTrace::ForDuration, OutHits, true);
 
-		UGameInstance* GameInstance = GetGameInstance();
+		const UGameInstance* GameInstance = GetGameInstance();
 		check(GameInstance);
 
-		UEternalStrikerFXManager* FXManager{ GameInstance->GetSubsystem<UEternalStrikerFXManager>() };
+		const UEternalStrikerFXManager* FXManager{ GameInstance->GetSubsystem<UEternalStrikerFXManager>() };
 		check(FXManager);
 
-		for (FHitResult HitResult : OutHits)
+		for (const FHitResult& HitResult : OutHits)
 		{
 			AActor* HitActor{ HitResult.GetActor() };
 			if (!IsValid(HitActor))
@@ -123,7 +123,7 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 			}
 
 			LineTraceIgnoreActors.AddUnique(HitActor);
-			FXManager->SpawnFXByName(WeaponHitFXName, TOptional<FVector>(HitResult.Location), nullptr);
+			FXManager->SpawnFXAndSoundByName(WeaponHitFXName, TOptional<FVector>(HitResult.Location), nullptr);
 
 			//@TODO : Character의 Stat이 구현되면 Stat에 AttackPower or MagicPower를 곱해서 데미지를 전달해야 함
 			UGameplayStatics::ApplyDamage(HitActor, AttackPower, GetInstigatorController(), this, UDamageType::StaticClass());

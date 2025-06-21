@@ -4,13 +4,14 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "EternalStriker/EternalStrikerDefaultSettings.h"
 #include "EternalStriker/Data/EternalFXData.h"
 
-void UEternalStrikerFXManager::SpawnFXByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter)
+void UEternalStrikerFXManager::SpawnFXAndSoundByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const
 {
-	UEternalFXData* FXData{ FindFXData(InFXName) };
+	const UEternalFXData* FXData{ FindFXData(InFXName) };
 	if (!IsValid(FXData))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%hs: FXData is null"), __FUNCTION__);
@@ -18,7 +19,7 @@ void UEternalStrikerFXManager::SpawnFXByName(const FName& InFXName, TOptional<FV
 		return;
 	}
 
-	FEternalFXDataStruct FXDataStruct{ FXData->EternalFXDataStruct };
+	const FEternalFXDataStruct& FXDataStruct{ FXData->EternalFXDataStruct };
 
 	FVector FXLocation{};
 	if (OptionalFXLocation.IsSet())
@@ -28,7 +29,10 @@ void UEternalStrikerFXManager::SpawnFXByName(const FName& InFXName, TOptional<FV
 	
 	if (IsValid(InTargetCharacter))
 	{
-		FXLocation = InTargetCharacter->GetMesh()->GetSocketLocation(FXDataStruct.FXSocketNameData);
+		const USkeletalMeshComponent* SkeletalMesh{ InTargetCharacter->GetMesh() };
+		check(SkeletalMesh);
+
+		FXLocation = SkeletalMesh->GetSocketLocation(FXDataStruct.FXSocketNameData);
 	}
 	
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
@@ -40,6 +44,9 @@ void UEternalStrikerFXManager::SpawnFXByName(const FName& InFXName, TOptional<FV
 		true,
 		true
 	);
+
+	//SoundManager구현 후 여기서 호출
+	UGameplayStatics::PlaySound2D(GetWorld(), FXDataStruct.FXSoundWaveData);
 }
 
 UEternalFXData* UEternalStrikerFXManager::FindFXData(const FName& InFXName) const
@@ -54,10 +61,10 @@ UEternalFXData* UEternalStrikerFXManager::FindFXData(const FName& InFXName) cons
 		return nullptr;
 	}
 
-	UDataTable* LoadedFXDataTable = DefaultSettings->FXDataTable.LoadSynchronous();
+	const UDataTable* LoadedFXDataTable = DefaultSettings->FXDataTable.LoadSynchronous();
 	ensureAlways(LoadedFXDataTable);
 
-	FEternalFXDataTableRow* FXDataTableRow{ LoadedFXDataTable->FindRow<FEternalFXDataTableRow>(InFXName, TEXT("")) };
+	const FEternalFXDataTableRow* FXDataTableRow{ LoadedFXDataTable->FindRow<FEternalFXDataTableRow>(InFXName, TEXT("")) };
 	if (!FXDataTableRow)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%hs: There is no FX Data by %s"), __FUNCTION__, InFXName);

@@ -13,7 +13,7 @@ class ETERNALSTRIKER_API UEternalStrikerFXManager : public UGameInstanceSubsyste
 	GENERATED_BODY()
 
 public:
-	void SpawnFXByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter);
+	void SpawnFXAndSoundByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const;
 
 private:
 	UEternalFXData* FindFXData(const FName& InFXName) const;
