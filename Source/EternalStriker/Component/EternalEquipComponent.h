@@ -13,9 +13,6 @@ class ETERNALSTRIKER_API UEternalEquipComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-	//현재 장착중인 무기 포인터
-	//장착 시전 시 재생할 AnimMontage
-
 public:
 	AEternalStrikerWeapon* GetEquippedWeapon() const;
 	void SetEquippedWeapon(AEternalStrikerWeapon* InWeapon);

@@ -46,7 +46,7 @@ void UEternalCombatComponent::IncreaseCurrentComboCount()
 
 	if (CurrentComboCount > FullComboCount)
 	{
-		CurrentComboCount = 0;
+		ResetCurrentComboCount();
 	}
 }
 

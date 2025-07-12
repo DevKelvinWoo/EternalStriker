@@ -2,13 +2,18 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "EternalStriker/Weapon/EternalStrikerWeapon.h"
 #include "EternalWeaponData.generated.h"
 
-class UNiagaraSystem;
-class USoundWave;
+class UEternalFXData;
+class UEternalSoundData;
 
-enum class EEternalWeaponCategory : uint8;
+UENUM()
+enum class EEternalWeaponCategory : uint8
+{
+	None,
+	Sword,
+	Staff
+};
 
 USTRUCT()
 struct FEternalWeaponDataStruct
@@ -16,16 +21,13 @@ struct FEternalWeaponDataStruct
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UNiagaraSystem> WeaponAuraNiagaraSystemData;
+	TObjectPtr<UEternalFXData> WeaponAuraNiagaraSystemData;
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsSwordWeapon"))
-	TObjectPtr<UNiagaraSystem> WeaponHitNiagaraSystemData;
+	TObjectPtr<UEternalFXData> WeaponHitNiagaraSystemData;
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<USoundWave> WeaponSwingSoundWaveData;
-
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<USoundWave> WeaponHitSoundWaveData;
+	TObjectPtr<UEternalSoundData> WeaponSwingSoundWaveData;
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "100"))
 	int32 AttackPowerData{};

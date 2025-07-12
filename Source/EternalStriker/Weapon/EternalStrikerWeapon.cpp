@@ -7,7 +7,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/DamageType.h"
 
-#include "EternalStriker/Data/EternalWeaponData.h"
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
 #include "EternalStriker/Manager/EternalStrikerFXManager.h"
 #include "EternalStriker/Enemy/EternalStrikerEnemy.h"
@@ -59,19 +58,7 @@ void AEternalStrikerWeapon::InitializeWeaponData()
 		return;
 	}
 
-	const FEternalWeaponDataStruct& WeaponDataStruct{ WeaponData->EternalWeaponDataStruct };
-
-	AttackPower = WeaponDataStruct.AttackPowerData;
-	MagicPower = WeaponDataStruct.MagicPowerData;
-	AdditionalSpeed = WeaponDataStruct.AdditionalSpeedData;
-
-	WeaponAuraNiagara = WeaponDataStruct.WeaponAuraNiagaraSystemData;
-	WeaponHitNiagara = WeaponDataStruct.WeaponHitNiagaraSystemData;
-
-	WeaponSwingSound = WeaponDataStruct.WeaponSwingSoundWaveData;
-	WeaponHitSound = WeaponDataStruct.WeaponHitSoundWaveData;
-
-	WeaponCategory = WeaponDataStruct.WeaponCategoryData;
+	WeaponDataStruct = WeaponData->EternalWeaponDataStruct;
 }
 
 void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -123,10 +110,10 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 			}
 
 			LineTraceIgnoreActors.AddUnique(HitActor);
-			FXManager->SpawnFXAndSoundByName(WeaponHitFXName, TOptional<FVector>(HitResult.Location), nullptr);
+			FXManager->SpawnFXAndFXSoundByData(WeaponDataStruct.WeaponHitNiagaraSystemData, TOptional<FVector>(HitResult.Location), nullptr);
 
-			//@TODO : Character의 Stat이 구현되면 Stat에 AttackPower or MagicPower를 곱해서 데미지를 전달해야 함
-			UGameplayStatics::ApplyDamage(HitActor, AttackPower, GetInstigatorController(), this, UDamageType::StaticClass());
+			//@TODO : Character의 Stat이 구현되면 Stat에 무기의 AttackPower or MagicPower를 연산해서 데미지를 전달해야 함
+			UGameplayStatics::ApplyDamage(HitActor, WeaponDataStruct.AttackPowerData, GetInstigatorController(), this, UDamageType::StaticClass());
 		}
 	}
 	else

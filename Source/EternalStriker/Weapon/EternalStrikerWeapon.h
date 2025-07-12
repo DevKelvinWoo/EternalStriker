@@ -2,23 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "EternalStriker/Data/EternalWeaponData.h"
 #include "EternalStrikerWeapon.generated.h"
 
 class USkeletalMeshComponent;
 class UBoxComponent;
 class USphereComponent;
-class UNiagaraSystem;
-class USoundWave;
-
-class UEternalWeaponData;
-
-UENUM()
-enum class EEternalWeaponCategory : uint8
-{
-	None,
-	Sword,
-	Staff
-};
 
 UCLASS()
 class ETERNALSTRIKER_API AEternalStrikerWeapon : public AActor
@@ -55,31 +44,12 @@ private:
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TObjectPtr<UEternalWeaponData> WeaponData;
 
-	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
-	FName WeaponHitFXName{};
+	FEternalWeaponDataStruct WeaponDataStruct;
 
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	float AttackLineTraceLength{ 0.f };
 
-	UPROPERTY(Transient)
-	TObjectPtr<UNiagaraSystem> WeaponAuraNiagara;
-
-	UPROPERTY(Transient)
-	TObjectPtr<UNiagaraSystem> WeaponHitNiagara;
-
-	UPROPERTY(Transient)
-	TObjectPtr<USoundWave> WeaponSwingSound;
-
-	UPROPERTY(Transient)
-	TObjectPtr<USoundWave> WeaponHitSound;
-
-	int32 AttackPower{};
-	int32 MagicPower{};
-	int32 AdditionalSpeed{};
+	TArray<AActor*> LineTraceIgnoreActors;
 
 	bool bWeaponReadyToAttack{ false };
-
-	EEternalWeaponCategory WeaponCategory{ EEternalWeaponCategory::None };
-
-	TArray<AActor*> LineTraceIgnoreActors;
 };

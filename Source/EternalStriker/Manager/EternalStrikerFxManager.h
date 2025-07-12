@@ -5,7 +5,10 @@
 #include "EternalStriker/Data/EternalFXData.h"
 #include "EternalStrikerFXManager.generated.h"
 
+class UNiagaraSystem;
+
 class UEternalFXData;
+class UEternalSoundData;
 
 UCLASS()
 class ETERNALSTRIKER_API UEternalStrikerFXManager : public UGameInstanceSubsystem
@@ -13,7 +16,8 @@ class ETERNALSTRIKER_API UEternalStrikerFXManager : public UGameInstanceSubsyste
 	GENERATED_BODY()
 
 public:
-	void SpawnFXAndSoundByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const;
+	void SpawnFXAndFXSoundByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const;
+	void SpawnFXAndFXSoundByData(const UEternalFXData* InFXData, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const;
 
 private:
 	UEternalFXData* FindFXData(const FName& InFXName) const;

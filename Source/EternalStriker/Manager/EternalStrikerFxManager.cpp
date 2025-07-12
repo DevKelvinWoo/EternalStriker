@@ -11,7 +11,7 @@
 #include "EternalStriker/Data/EternalSoundData.h"
 #include "EternalStriker/Manager/EternalStrikerSoundManager.h"
 
-void UEternalStrikerFXManager::SpawnFXAndSoundByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const
+void UEternalStrikerFXManager::SpawnFXAndFXSoundByName(const FName& InFXName, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const
 {
 	const UEternalFXData* FXData{ FindFXData(InFXName) };
 	if (!IsValid(FXData))
@@ -43,6 +43,53 @@ void UEternalStrikerFXManager::SpawnFXAndSoundByName(const FName& InFXName, TOpt
 
 		FXLocation = SkeletalMesh->GetSocketLocation(FXSocketNameData);
 	}
+
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),
+		FXNiagaraSystemData,
+		FXLocation,
+		FXRotatorData,
+		FXScaleData,
+		true,
+		true
+	);
+
+	if (IsValid(SoundData))
+	{
+		const UGameInstance* GameInstance = GetGameInstance();
+		check(GameInstance);
+
+		const UEternalStrikerSoundManager* SoundManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
+		check(SoundManager);
+
+		SoundManager->PlaySoundByDataAsset(SoundData);
+	}
+}
+
+void UEternalStrikerFXManager::SpawnFXAndFXSoundByData(const UEternalFXData* InFXData, TOptional<FVector> OptionalFXLocation, const ACharacter* InTargetCharacter) const
+{
+	if (!IsValid(InFXData))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%hs: InFXData is null"), __FUNCTION__);
+
+		return;
+
+	}
+
+	FVector FXLocation{};
+	if (OptionalFXLocation.IsSet())
+	{
+		FXLocation = OptionalFXLocation.GetValue();
+	}
+
+	const FEternalFXDataStruct& FXDataStruct{ InFXData->EternalFXDataStruct };
+
+	UNiagaraSystem* FXNiagaraSystemData{ FXDataStruct.FXNiagaraSystemData };
+	const UEternalSoundData* SoundData{ FXDataStruct.SoundData };
+	const FVector& FXScaleData{ FXDataStruct.FXScaleData };
+	const FRotator& FXRotatorData{ FXDataStruct.FXRotationData };
+	const FName& FXSocketNameData{ FXDataStruct.FXSocketNameData };
+	const bool FXLoopingData{ FXDataStruct.bIsLooping };
 
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 		GetWorld(),
