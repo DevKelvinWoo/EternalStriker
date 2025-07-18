@@ -93,7 +93,7 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 		LineTraceIgnoreActors.Add(this);
 
 		TArray<FHitResult> OutHits;
-		UKismetSystemLibrary::LineTraceMultiForObjects(GetWorld(), LineTraceStart, LineTraceEnd, ObjectTypes, false, LineTraceIgnoreActors, EDrawDebugTrace::ForDuration, OutHits, true);
+		UKismetSystemLibrary::LineTraceMultiForObjects(GetWorld(), LineTraceStart, LineTraceEnd, ObjectTypes, false, LineTraceIgnoreActors, EDrawDebugTrace::None, OutHits, true);
 
 		const UGameInstance* GameInstance = GetGameInstance();
 		check(GameInstance);

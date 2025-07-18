@@ -22,7 +22,7 @@ void UEternalCombatComponent::AttackBasic()
 	const UEternalEquipComponent* OwnerCharacterEquipComponent{ OwnerCharacter->GetEquipComponent() };
 	check(OwnerCharacterEquipComponent);
 
-	const AEternalStrikerWeapon* EquippedWeapon{ OwnerCharacterEquipComponent->GetEquippedWeapon() };
+	AEternalStrikerWeapon* EquippedWeapon{ OwnerCharacterEquipComponent->GetEquippedWeapon() };
 	if (!IsValid(EquippedWeapon))
 	{
 		return;
