@@ -11,6 +11,8 @@
 #include "EternalStriker/Manager/EternalStrikerFXManager.h"
 #include "EternalStriker/Enemy/EternalStrikerEnemy.h"
 
+#define DEBUG_DRAW_SWEEP_TRACE 0
+
 AEternalStrikerWeapon::AEternalStrikerWeapon()
 {
 	USceneComponent* RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
@@ -93,7 +95,39 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 		LineTraceIgnoreActors.Add(this);
 
 		TArray<FHitResult> OutHits;
-		UKismetSystemLibrary::LineTraceMultiForObjects(GetWorld(), LineTraceStart, LineTraceEnd, ObjectTypes, false, LineTraceIgnoreActors, EDrawDebugTrace::None, OutHits, true);
+		FCollisionQueryParams Params(NAME_None, false, this);
+		Params.AddIgnoredActors(LineTraceIgnoreActors);
+		bool bResult = GetWorld()->SweepMultiByObjectType
+		(
+			OutHits,
+			GetActorLocation(),
+			GetActorLocation() + GetActorRightVector() * AttackLineTraceLength,
+			FQuat::Identity,
+			ObjectTypes,
+			FCollisionShape::MakeSphere(10),
+			Params
+		);
+
+#if DEBUG_DRAW_SWEEP_TRACE
+		FVector TraceVec = GetActorRightVector() * AttackLineTraceLength;
+		FVector Center = GetActorLocation() + TraceVec * 0.5f;
+		float HalfHeight = AttackLineTraceLength * 0.5f + 10;
+		FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+		FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+		float DebugLifeTime = 3.0f;
+
+		DrawDebugCapsule
+		(
+			GetWorld(),
+			Center,
+			HalfHeight,
+			10,
+			CapsuleRot,
+			DrawColor,
+			false,
+			DebugLifeTime
+		);
+#endif // DEBUG_DRAW_SWEEP_TRACE
 
 		const UGameInstance* GameInstance = GetGameInstance();
 		check(GameInstance);
