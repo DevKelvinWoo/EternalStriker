@@ -10,6 +10,7 @@
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
 #include "EternalStriker/Manager/EternalStrikerFXManager.h"
 #include "EternalStriker/Enemy/EternalStrikerEnemy.h"
+#include "EternalStriker/Manager/EternalStrikerSoundManager.h"
 
 #define DEBUG_DRAW_SWEEP_TRACE 0
 
@@ -129,7 +130,7 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 		);
 #endif // DEBUG_DRAW_SWEEP_TRACE
 
-		const UGameInstance* GameInstance = GetGameInstance();
+		const UGameInstance* GameInstance{ GetGameInstance() };
 		check(GameInstance);
 
 		const UEternalStrikerFXManager* FXManager{ GameInstance->GetSubsystem<UEternalStrikerFXManager>() };
@@ -154,4 +155,15 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 	{
 		LineTraceIgnoreActors.Empty();
 	}
+}
+
+void AEternalStrikerWeapon::PlayWeaponSwingSound()
+{
+	const UGameInstance* GameInstance{ GetGameInstance() };
+	check(GameInstance);
+
+	const UEternalStrikerSoundManager* FXManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
+	check(FXManager);
+
+	FXManager->PlaySoundByDataAsset(WeaponDataStruct.WeaponSwingSoundWaveData);
 }

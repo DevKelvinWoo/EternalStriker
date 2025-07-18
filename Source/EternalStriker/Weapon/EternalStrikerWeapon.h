@@ -20,6 +20,8 @@ public:
 	void SetWeaponEquipCollision(ECollisionEnabled::Type InCollisionEnabled);
 	void SetWeaponReadyToAttack(const bool bReadyToAttack);
 
+	void PlayWeaponSwingSound();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;

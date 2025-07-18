@@ -6,6 +6,8 @@
 
 class UAnimMontage;
 
+class UEternalSoundData;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ETERNALSTRIKER_API UEternalCombatComponent : public UActorComponent
 {
@@ -19,12 +21,17 @@ public:
 	
 	void SetCanAttackState(const bool InCanAttackState) { bCanAttack = InCanAttackState; }
 
-private:	
+private:
+	void PlayCharacterCombatSound();
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAnimMontage> CombatMontage;
 
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
 	TMap<int32, FName> ComboMontageSectionNameContainer;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TMap<int32, UEternalSoundData*> CombatCharacterSoundContainer;
 
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
 	int32 FullComboCount{};

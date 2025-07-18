@@ -3,6 +3,7 @@
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
 #include "EternalStriker/Component/EternalEquipComponent.h"
 #include "EternalStriker/Weapon/EternalStrikerWeapon.h"
+#include "EternalStriker/Manager/EternalStrikerSoundManager.h"
 
 void UEternalCombatComponent::AttackBasic()
 {
@@ -27,6 +28,10 @@ void UEternalCombatComponent::AttackBasic()
 	{
 		return;
 	}
+
+	//PlaySoundFX
+	EquippedWeapon->PlayWeaponSwingSound();
+	PlayCharacterCombatSound();
 
 	const USkeletalMeshComponent* OwnerCharacterMesh{ OwnerCharacter->GetMesh() };
 	check(OwnerCharacterMesh);
@@ -53,4 +58,19 @@ void UEternalCombatComponent::IncreaseCurrentComboCount()
 void UEternalCombatComponent::ResetCurrentComboCount()
 {
 	CurrentComboCount = 0;
+}
+
+void UEternalCombatComponent::PlayCharacterCombatSound()
+{
+	UWorld* World{ GetWorld() };
+	check(World);
+
+	const UGameInstance* GameInstance{ World->GetGameInstance() };
+	check(GameInstance);
+
+	const UEternalStrikerSoundManager* FXManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
+	check(FXManager);
+
+	UEternalSoundData** CharacterCombatSoundData{ CombatCharacterSoundContainer.Find(CurrentComboCount) };
+	FXManager->PlaySoundByDataAsset(*CharacterCombatSoundData);
 }
