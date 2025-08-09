@@ -6,11 +6,15 @@
 #include "Engine/DataAsset.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/DamageType.h"
+#include "Camera/CameraShakeBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
 #include "EternalStriker/Manager/EternalStrikerFXManager.h"
 #include "EternalStriker/Enemy/EternalStrikerEnemy.h"
 #include "EternalStriker/Manager/EternalStrikerSoundManager.h"
+#include "EternalStriker/EternalStrikerPlayerController.h"
 
 #define DEBUG_DRAW_SWEEP_TRACE 0
 
@@ -130,12 +134,6 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 		);
 #endif // DEBUG_DRAW_SWEEP_TRACE
 
-		const UGameInstance* GameInstance{ GetGameInstance() };
-		check(GameInstance);
-
-		const UEternalStrikerFXManager* FXManager{ GameInstance->GetSubsystem<UEternalStrikerFXManager>() };
-		check(FXManager);
-
 		for (const FHitResult& HitResult : OutHits)
 		{
 			AActor* HitActor{ HitResult.GetActor() };
@@ -145,7 +143,8 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 			}
 
 			LineTraceIgnoreActors.AddUnique(HitActor);
-			FXManager->SpawnFXAndFXSoundByData(WeaponDataStruct.WeaponHitNiagaraSystemData, TOptional<FVector>(HitResult.Location), nullptr);
+
+			PlayHitImpactEffects(HitResult.Location);
 
 			//@TODO : Character의 Stat이 구현되면 Stat에 무기의 AttackPower or MagicPower를 연산해서 데미지를 전달해야 함
 			UGameplayStatics::ApplyDamage(HitActor, WeaponDataStruct.AttackPowerData, GetInstigatorController(), this, UDamageType::StaticClass());
@@ -157,13 +156,48 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 	}
 }
 
+void AEternalStrikerWeapon::PlayHitImpactEffects(const FVector& HitLocation)
+{
+	const UGameInstance* GameInstance{ GetGameInstance() };
+	check(GameInstance);
+
+	const UEternalStrikerFXManager* FXManager{ GameInstance->GetSubsystem<UEternalStrikerFXManager>() };
+	check(FXManager);
+	FXManager->SpawnFXAndFXSoundByData(WeaponDataStruct.WeaponHitNiagaraSystemData, TOptional<FVector>(HitLocation), nullptr);
+
+	const UEternalStrikerSoundManager* SoundManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
+	check(SoundManager);
+	SoundManager->PlaySoundByDataAsset(WeaponDataStruct.WeaponHitImpactSoundWaveData);
+
+	AEternalStrikerPlayerController* PC{ Cast<AEternalStrikerPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)) };
+	check(PC);
+	ensureAlways(WeaponCameraShakeClass);
+	PC->ClientStartCameraShake(WeaponCameraShakeClass);
+	
+	UWorld* World{ GetWorld() };
+	check(World);
+	UGameplayStatics::SetGlobalTimeDilation(World, 0.1f);
+
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([this]() {
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	});
+
+	World->GetTimerManager().SetTimer(
+		HitStopTimerHandle,
+		TimerDelegate,
+		0.01f,
+		false
+	);
+}
+
 void AEternalStrikerWeapon::PlayWeaponSwingSound()
 {
 	const UGameInstance* GameInstance{ GetGameInstance() };
 	check(GameInstance);
 
-	const UEternalStrikerSoundManager* FXManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
-	check(FXManager);
+	const UEternalStrikerSoundManager* SoundManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
+	check(SoundManager);
 
-	FXManager->PlaySoundByDataAsset(WeaponDataStruct.WeaponSwingSoundWaveData);
+	SoundManager->PlaySoundByDataAsset(WeaponDataStruct.WeaponSwingSoundWaveData);
 }

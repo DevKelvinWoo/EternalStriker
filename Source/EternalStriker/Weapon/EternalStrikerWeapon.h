@@ -8,6 +8,7 @@
 class USkeletalMeshComponent;
 class UBoxComponent;
 class USphereComponent;
+class UCameraShakeBase;
 
 UCLASS()
 class ETERNALSTRIKER_API AEternalStrikerWeapon : public AActor
@@ -37,6 +38,8 @@ private:
 
 	void AttackByMultiLineTrace();
 
+	void PlayHitImpactEffects(const FVector& HitLocation);
+
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TObjectPtr<USkeletalMeshComponent> WeaponSkeletalMesh;
 
@@ -46,6 +49,9 @@ private:
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TObjectPtr<UEternalWeaponData> WeaponData;
 
+	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
+	TSubclassOf<UCameraShakeBase> WeaponCameraShakeClass;
+
 	FEternalWeaponDataStruct WeaponDataStruct;
 
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
@@ -54,4 +60,6 @@ private:
 	TArray<AActor*> LineTraceIgnoreActors;
 
 	bool bWeaponReadyToAttack{ false };
+
+	FTimerHandle HitStopTimerHandle;
 };

@@ -29,6 +29,9 @@ struct FEternalWeaponDataStruct
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UEternalSoundData> WeaponSwingSoundWaveData;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UEternalSoundData> WeaponHitImpactSoundWaveData;
+
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "100"))
 	int32 AttackPowerData{};
 
