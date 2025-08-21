@@ -109,7 +109,7 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 			GetActorLocation() + GetActorRightVector() * AttackLineTraceLength,
 			FQuat::Identity,
 			ObjectTypes,
-			FCollisionShape::MakeSphere(10),
+			FCollisionShape::MakeSphere(13),
 			Params
 		);
 
@@ -165,30 +165,26 @@ void AEternalStrikerWeapon::PlayHitImpactEffects(const FVector& HitLocation)
 	check(FXManager);
 	FXManager->SpawnFXAndFXSoundByData(WeaponDataStruct.WeaponHitNiagaraSystemData, TOptional<FVector>(HitLocation), nullptr);
 
-	const UEternalStrikerSoundManager* SoundManager{ GameInstance->GetSubsystem<UEternalStrikerSoundManager>() };
-	check(SoundManager);
-	SoundManager->PlaySoundByDataAsset(WeaponDataStruct.WeaponHitImpactSoundWaveData);
-
 	AEternalStrikerPlayerController* PC{ Cast<AEternalStrikerPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)) };
 	check(PC);
 	ensureAlways(WeaponCameraShakeClass);
 	PC->ClientStartCameraShake(WeaponCameraShakeClass);
 	
-	UWorld* World{ GetWorld() };
-	check(World);
-	UGameplayStatics::SetGlobalTimeDilation(World, 0.1f);
+	//UWorld* World{ GetWorld() };
+	//check(World);
+	//UGameplayStatics::SetGlobalTimeDilation(World, 0.1f);
 
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([this]() {
-		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
-	});
+	//FTimerDelegate TimerDelegate;
+	//TimerDelegate.BindLambda([this]() {
+	//	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	//});
 
-	World->GetTimerManager().SetTimer(
-		HitStopTimerHandle,
-		TimerDelegate,
-		0.01f,
-		false
-	);
+	//World->GetTimerManager().SetTimer(
+	//	HitStopTimerHandle,
+	//	TimerDelegate,
+	//	0.01f,
+	//	false
+	//);
 }
 
 void AEternalStrikerWeapon::PlayWeaponSwingSound()
