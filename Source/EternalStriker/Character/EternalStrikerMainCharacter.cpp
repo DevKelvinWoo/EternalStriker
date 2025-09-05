@@ -136,6 +136,13 @@ void AEternalStrikerMainCharacter::EquipWeapon(const FInputActionValue& InAction
 	}
 }
 
+bool AEternalStrikerMainCharacter::IsEquipWeapon() const
+{
+	check(EquipComponent);
+
+	return EquipComponent->IsWeaponEquipped();
+}
+
 void AEternalStrikerMainCharacter::SetCharacterMovementValues()
 {
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();

@@ -23,9 +23,13 @@ public:
 
 	void SetEquipableWeapon(AEternalStrikerWeapon* InEquipableWeapon);
 
+	bool IsWeaponEquipped() const { return bIsEquipping; }
+
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAnimMontage> EquipAnimMontage;
+
+	bool bIsEquipping{ false };
 
 	TWeakObjectPtr<AEternalStrikerWeapon> EquipableWeapon;
 	TWeakObjectPtr<AEternalStrikerWeapon> EquippedWeapon;

@@ -57,6 +57,8 @@ void UEternalEquipComponent::EquipWeapon()
 
 	check(EquipAnimMontage);
 	OwnerCharacterAnimInstance->Montage_Play(EquipAnimMontage, 1.f);
+
+	bIsEquipping = true;
 }
 
 void UEternalEquipComponent::AttachWeaponToSocket() const

@@ -36,6 +36,9 @@ public:
 	UFUNCTION()
 	void EquipWeapon(const FInputActionValue& InActionValue);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsEquipWeapon() const;
+
 	void SetEquipableWeapon(AEternalStrikerWeapon* InEquipableWeapon);
 
 protected:
