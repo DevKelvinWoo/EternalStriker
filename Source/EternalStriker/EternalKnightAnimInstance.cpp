@@ -43,12 +43,13 @@ void UEternalKnightAnimInstance::AnimNotify_SetCanAttackState()
 
 void UEternalKnightAnimInstance::AnimNotify_SetCannotAttackState()
 {
-	const AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
 	check(OwnerKnight);
 
 	UEternalCombatComponent* OwnerKnightCombatComponent{ OwnerKnight->GetCombatComponent() };
 	check(OwnerKnightCombatComponent);
 
+	OwnerKnight->SetCanMove(false);
 	OwnerKnightCombatComponent->SetCanAttackState(false);
 }
 
@@ -89,4 +90,12 @@ void UEternalKnightAnimInstance::AnimNotify_DisableWeaponCollision()
 	check(EquippedWeapon);
 
 	EquippedWeapon->SetWeaponReadyToAttack(false);
+}
+
+void UEternalKnightAnimInstance::AnimNotify_CanMove()
+{
+	AEternalStrikerKnight* OwnerKnight{ Cast<AEternalStrikerKnight>(TryGetPawnOwner()) };
+	check(OwnerKnight);
+
+	OwnerKnight->SetCanMove(true);
 }

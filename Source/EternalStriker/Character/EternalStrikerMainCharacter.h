@@ -39,6 +39,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsEquipWeapon() const;
 
+	void SetCanMove(const bool InbCanMove);
+
 	void SetEquipableWeapon(AEternalStrikerWeapon* InEquipableWeapon);
 
 protected:

@@ -32,4 +32,7 @@ public:
 
 	UFUNCTION()
 	void AnimNotify_DisableWeaponCollision();
+
+	UFUNCTION()
+	void AnimNotify_CanMove();
 };

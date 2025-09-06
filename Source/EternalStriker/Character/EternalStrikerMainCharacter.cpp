@@ -143,6 +143,11 @@ bool AEternalStrikerMainCharacter::IsEquipWeapon() const
 	return EquipComponent->IsWeaponEquipped();
 }
 
+void AEternalStrikerMainCharacter::SetCanMove(const bool InbCanMove)
+{
+	bCanMove = InbCanMove;
+}
+
 void AEternalStrikerMainCharacter::SetCharacterMovementValues()
 {
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
