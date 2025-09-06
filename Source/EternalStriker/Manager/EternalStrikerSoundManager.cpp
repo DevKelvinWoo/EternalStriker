@@ -15,10 +15,12 @@ void UEternalStrikerSoundManager::PlaySoundByName(const FName& InSoundName) cons
 		return;
 	}
 
-	USoundWave* SoundWave{ SoundData->SoundWaveData };
-	const float VolumeMultiplier{ SoundData->VolumeMultiplier };
-	const float PitchMultiplier{ SoundData->PitchMultiplier };
-	const float StartTime{ SoundData->StartTime };
+	const FEternalSoundDataStruct& SoundDataStruct{ SoundData->EternalSoundDataStruct };
+
+	USoundWave* SoundWave{ SoundDataStruct.SoundWaveData };
+	const float VolumeMultiplier{ SoundDataStruct.VolumeMultiplier };
+	const float PitchMultiplier{ SoundDataStruct.PitchMultiplier };
+	const float StartTime{ SoundDataStruct.StartTime };
 
 	UGameplayStatics::PlaySound2D(GetWorld(), SoundWave, VolumeMultiplier, PitchMultiplier, StartTime);
 }
@@ -32,10 +34,12 @@ void UEternalStrikerSoundManager::PlaySoundByDataAsset(const UEternalSoundData* 
 		return;
 	}
 
-	USoundWave* SoundWave{ InSoundData->SoundWaveData };
-	const float VolumeMultiplier{ InSoundData->VolumeMultiplier };
-	const float PitchMultiplier{ InSoundData->PitchMultiplier };
-	const float StartTime{ InSoundData->StartTime };
+	const FEternalSoundDataStruct& SoundDataStruct{ InSoundData->EternalSoundDataStruct };
+
+	USoundWave* SoundWave{ SoundDataStruct.SoundWaveData };
+	const float VolumeMultiplier{ SoundDataStruct.VolumeMultiplier };
+	const float PitchMultiplier{ SoundDataStruct.PitchMultiplier };
+	const float StartTime{ SoundDataStruct.StartTime };
 
 	UGameplayStatics::PlaySound2D(GetWorld(), SoundWave, VolumeMultiplier, PitchMultiplier, StartTime);
 }

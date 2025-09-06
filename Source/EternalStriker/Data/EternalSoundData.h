@@ -5,20 +5,10 @@
 #include "EternalSoundData.generated.h"
 
 USTRUCT()
-struct FEternalSoundDataTableRow : public FTableRowBase
+struct FEternalSoundDataStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UEternalSoundData> SoundDataAsset;
-};
-
-UCLASS()
-class ETERNALSTRIKER_API UEternalSoundData : public UDataAsset
-{
-	GENERATED_BODY()
-
-public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundWave> SoundWaveData;
 
@@ -30,4 +20,23 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float StartTime{ 0.f };
+};
+
+UCLASS()
+class ETERNALSTRIKER_API UEternalSoundData : public UDataAsset
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+	FEternalSoundDataStruct EternalSoundDataStruct;
+};
+
+USTRUCT()
+struct FEternalSoundDataTableRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UEternalSoundData> SoundDataAsset;
 };
