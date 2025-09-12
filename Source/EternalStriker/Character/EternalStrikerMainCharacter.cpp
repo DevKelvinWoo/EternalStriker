@@ -8,6 +8,7 @@
 
 #include "EternalStriker/Component/EternalCombatComponent.h"
 #include "EternalStriker/Component/EternalEquipComponent.h"
+#include "EternalStriker/Component/EternalCharacterStatComponent.h"
 #include "EternalStriker//Weapon/EternalStrikerWeapon.h"
 
 AEternalStrikerMainCharacter::AEternalStrikerMainCharacter()
@@ -17,8 +18,6 @@ AEternalStrikerMainCharacter::AEternalStrikerMainCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-
-	SetCharacterMovementValues();
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComponent->SetupAttachment(RootComponent);
@@ -30,6 +29,9 @@ AEternalStrikerMainCharacter::AEternalStrikerMainCharacter()
 
 	CombatComponent = CreateDefaultSubobject<UEternalCombatComponent>(TEXT("CombatComponent"));
 	EquipComponent = CreateDefaultSubobject<UEternalEquipComponent>(TEXT("EquipComponent"));
+	StatComponent = CreateDefaultSubobject<UEternalCharacterStatComponent>(TEXT("StatComponent"));
+
+	SetCharacterMovementValues();
 }
 
 void AEternalStrikerMainCharacter::BeginPlay()
@@ -68,18 +70,18 @@ void AEternalStrikerMainCharacter::MoveCharacter(const FInputActionValue& InActi
 void AEternalStrikerMainCharacter::RunCharacter(const FInputActionValue& InActionValue)
 {
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
-	check(MovementComponent);
+	check(MovementComponent && StatComponent);
 
 	const bool bInputDashKey = InActionValue.IsNonZero();
 	if (bInputDashKey)
 	{
 		bIsRunning = true;
-		MovementComponent->MaxWalkSpeed = MaxRunSpeed;
+		MovementComponent->MaxWalkSpeed = StatComponent->GetRunSpeed();
 	}
 	else
 	{
 		bIsRunning = false;
-		MovementComponent->MaxWalkSpeed = MaxWalkSpeed;
+		MovementComponent->MaxWalkSpeed = StatComponent->GetWalkSpeed();
 	}
 }
 
@@ -151,12 +153,12 @@ void AEternalStrikerMainCharacter::SetCanMove(const bool InbCanMove)
 void AEternalStrikerMainCharacter::SetCharacterMovementValues()
 {
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
-	check(MovementComponent);
+	check(MovementComponent && StatComponent);
 
 	MovementComponent->bOrientRotationToMovement = true;
 	MovementComponent->RotationRate = FRotator(0.0f, 300.0f, 0.0f);
 	MovementComponent->AirControl = 0.35f;
-	MovementComponent->MaxWalkSpeed = MaxWalkSpeed;
+	MovementComponent->MaxWalkSpeed = StatComponent->GetWalkSpeed();
 	MovementComponent->MinAnalogWalkSpeed = 20.f;
 	MovementComponent->bUseSeparateBrakingFriction = true;
 	MovementComponent->MaxAcceleration = 1000.f;
@@ -164,10 +166,4 @@ void AEternalStrikerMainCharacter::SetCharacterMovementValues()
 	MovementComponent->BrakingDecelerationFalling = 1500.0f;
 	MovementComponent->JumpZVelocity = 450.f;
 	MovementComponent->GravityScale = 1.5f;
-}
-
-void AEternalStrikerMainCharacter::SetEquipableWeapon(AEternalStrikerWeapon* InEquipableWeapon)
-{
-	check(EquipComponent);
-	EquipComponent->SetEquipableWeapon(InEquipableWeapon);
 }

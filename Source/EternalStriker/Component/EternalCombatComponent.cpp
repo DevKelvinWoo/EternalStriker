@@ -2,6 +2,7 @@
 
 #include "EternalStriker/Character/EternalStrikerMainCharacter.h"
 #include "EternalStriker/Component/EternalEquipComponent.h"
+#include "EternalStriker/Component/EternalCharacterStatComponent.h"
 #include "EternalStriker/Weapon/EternalStrikerWeapon.h"
 #include "EternalStriker/Manager/EternalStrikerSoundManager.h"
 
@@ -58,6 +59,30 @@ void UEternalCombatComponent::IncreaseCurrentComboCount()
 void UEternalCombatComponent::ResetCurrentComboCount()
 {
 	CurrentComboCount = 0;
+}
+
+float UEternalCombatComponent::CalculateAttackPower() const
+{
+	const AEternalStrikerMainCharacter* OwnerCharacter{ Cast<AEternalStrikerMainCharacter>(GetOwner()) };
+	check(OwnerCharacter);
+
+	const UEternalEquipComponent* OwnerCharacterEquipComponent{ OwnerCharacter->GetEquipComponent() };
+	check(OwnerCharacterEquipComponent);
+
+	const UEternalCharacterStatComponent* OwnerCharacterStatComponent{ OwnerCharacter->GetCharacterStatComponent() };
+	check(OwnerCharacterStatComponent);
+
+	AEternalStrikerWeapon* EquippedWeapon{ OwnerCharacterEquipComponent->GetEquippedWeapon() };
+	if (!IsValid(EquippedWeapon))
+	{
+		return 0.0f;
+	}
+
+	const float WeaponAttackPower{ EquippedWeapon->GetWeaponAttackPowerData() };
+	const float CharacterAttackPowerStat{ OwnerCharacterStatComponent->GetAttackPower() };
+	const float ResultAttackPower{ WeaponAttackPower + CharacterAttackPowerStat };
+
+	return ResultAttackPower;
 }
 
 void UEternalCombatComponent::PlayCharacterCombatSound()

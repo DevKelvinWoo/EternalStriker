@@ -21,6 +21,8 @@ public:
 	
 	void SetCanAttackState(const bool InCanAttackState) { bCanAttack = InCanAttackState; }
 
+	float CalculateAttackPower() const;
+
 private:
 	void PlayCharacterCombatSound();
 

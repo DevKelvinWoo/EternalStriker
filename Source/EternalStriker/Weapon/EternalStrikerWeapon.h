@@ -10,6 +10,8 @@ class UBoxComponent;
 class USphereComponent;
 class UCameraShakeBase;
 
+class AEternalStrikerMainCharacter;
+
 UCLASS()
 class ETERNALSTRIKER_API AEternalStrikerWeapon : public AActor
 {
@@ -22,6 +24,10 @@ public:
 	void SetWeaponReadyToAttack(const bool bReadyToAttack);
 
 	void PlayWeaponSwingSound();
+
+	float GetWeaponAttackPowerData() const { return WeaponDataStruct.AttackPowerData; }
+
+	void SetOwnerCharacter(AEternalStrikerMainCharacter* InOwnerCharacter);
 
 protected:
 	virtual void BeginPlay() override;
@@ -52,12 +58,14 @@ private:
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	TSubclassOf<UCameraShakeBase> WeaponCameraShakeClass;
 
-	FEternalWeaponDataStruct WeaponDataStruct;
-
 	UPROPERTY(EditAnywhere, meta = (PrivateAccessAllow = "true"))
 	float AttackLineTraceLength{ 0.f };
 
-	TArray<AActor*> LineTraceIgnoreActors;
+	TWeakObjectPtr<AEternalStrikerMainCharacter> OwnerCharacterWeak;
+
+	FEternalWeaponDataStruct WeaponDataStruct;
+
+	TArray<AActor*> LineTraceIgnoreActors{};
 
 	bool bWeaponReadyToAttack{ false };
 

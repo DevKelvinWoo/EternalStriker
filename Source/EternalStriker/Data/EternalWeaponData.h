@@ -55,5 +55,5 @@ class ETERNALSTRIKER_API UEternalWeaponData : public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere)
-	FEternalWeaponDataStruct EternalWeaponDataStruct;
+	FEternalWeaponDataStruct EternalWeaponDataStruct{};
 };

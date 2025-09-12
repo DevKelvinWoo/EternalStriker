@@ -27,10 +27,10 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UAnimMontage> EquipAnimMontage;
+	TObjectPtr<UAnimMontage> EquipAnimMontage{};
 
 	bool bIsEquipping{ false };
 
-	TWeakObjectPtr<AEternalStrikerWeapon> EquipableWeapon;
-	TWeakObjectPtr<AEternalStrikerWeapon> EquippedWeapon;
+	TWeakObjectPtr<AEternalStrikerWeapon> EquipableWeapon{};
+	TWeakObjectPtr<AEternalStrikerWeapon> EquippedWeapon{};
 };

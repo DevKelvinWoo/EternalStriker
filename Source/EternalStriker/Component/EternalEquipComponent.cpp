@@ -49,6 +49,8 @@ void UEternalEquipComponent::EquipWeapon()
 	const AEternalStrikerMainCharacter* OwnerCharacter{ Cast<AEternalStrikerMainCharacter>(GetOwner()) };
 	check(OwnerCharacter);
 
+	EquippedWeapon->SetOwnerCharacter(Cast<AEternalStrikerMainCharacter>(GetOwner()));
+
 	const USkeletalMeshComponent* OwnerCharacterMesh{ OwnerCharacter->GetMesh() };
 	check(OwnerCharacterMesh);
 

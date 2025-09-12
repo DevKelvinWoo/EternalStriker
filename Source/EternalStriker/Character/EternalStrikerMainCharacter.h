@@ -10,6 +10,8 @@ class UCameraComponent;
 
 class UEternalCombatComponent;
 class UEternalEquipComponent;
+class UEternalCharacterStatComponent;
+
 class AEternalStrikerWeapon;
 
 UCLASS()
@@ -22,6 +24,7 @@ public:
 
 	UEternalCombatComponent* GetCombatComponent() const { return CombatComponent; }
 	UEternalEquipComponent* GetEquipComponent() const { return EquipComponent; }
+	UEternalCharacterStatComponent* GetCharacterStatComponent() const { return StatComponent; }
 
 	UFUNCTION()
 	void MoveCharacter(const FInputActionValue& InActionValue);
@@ -41,8 +44,6 @@ public:
 
 	void SetCanMove(const bool InbCanMove);
 
-	void SetEquipableWeapon(AEternalStrikerWeapon* InEquipableWeapon);
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -61,6 +62,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UEternalEquipComponent> EquipComponent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UEternalCharacterStatComponent> StatComponent;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool bIsRunning{ false };

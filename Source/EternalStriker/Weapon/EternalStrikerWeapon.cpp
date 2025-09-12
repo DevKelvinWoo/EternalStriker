@@ -15,6 +15,8 @@
 #include "EternalStriker/Enemy/EternalStrikerEnemy.h"
 #include "EternalStriker/Manager/EternalStrikerSoundManager.h"
 #include "EternalStriker/EternalStrikerPlayerController.h"
+#include "EternalStriker/Component/EternalCombatComponent.h"
+#include "EternalStriker/Component/EternalEquipComponent.h"
 
 #define DEBUG_DRAW_SWEEP_TRACE 0
 
@@ -44,6 +46,16 @@ void AEternalStrikerWeapon::SetWeaponReadyToAttack(const bool bReadyToAttack)
 	bWeaponReadyToAttack = bReadyToAttack;
 }
 
+void AEternalStrikerWeapon::SetOwnerCharacter(AEternalStrikerMainCharacter* InOwnerCharacter)
+{
+	if (!ensureAlways(IsValid(InOwnerCharacter)))
+	{
+		return;
+	}
+
+	OwnerCharacterWeak = MakeWeakObjectPtr(InOwnerCharacter);
+}
+
 void AEternalStrikerWeapon::BeginPlay()
 {
 	Super::BeginPlay();
@@ -70,13 +82,16 @@ void AEternalStrikerWeapon::InitializeWeaponData()
 
 void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AEternalStrikerMainCharacter* HitCharacter{ Cast<AEternalStrikerMainCharacter>(OtherActor) };
+	const AEternalStrikerMainCharacter* HitCharacter{ Cast<AEternalStrikerMainCharacter>(OtherActor) };
 	if (!IsValid(HitCharacter))
 	{
 		return;
 	}
 
-	HitCharacter->SetEquipableWeapon(this);
+	UEternalEquipComponent* HitCharacterEquipComponent{ HitCharacter->GetEquipComponent() };
+	check(HitCharacterEquipComponent);
+
+	HitCharacterEquipComponent->SetEquipableWeapon(this);
 }
 
 void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -87,7 +102,10 @@ void AEternalStrikerWeapon::HandleOnWeaponEquipCollisionEndOverlap(UPrimitiveCom
 		return;
 	}
 
-	HitCharacter->SetEquipableWeapon(nullptr);
+	UEternalEquipComponent* HitCharacterEquipComponent{ HitCharacter->GetEquipComponent() };
+	check(HitCharacterEquipComponent);
+
+	HitCharacterEquipComponent->SetEquipableWeapon(nullptr);
 }
 
 void AEternalStrikerWeapon::AttackByMultiLineTrace()
@@ -132,7 +150,15 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 			false,
 			DebugLifeTime
 		);
-#endif // DEBUG_DRAW_SWEEP_TRACE
+#endif
+
+		const AEternalStrikerMainCharacter* OwnerCharacter{ OwnerCharacterWeak.Get() };
+		check(OwnerCharacter);
+
+		const UEternalCombatComponent* CombatComponent{ OwnerCharacter->GetCombatComponent() };
+		check(CombatComponent);
+
+		const float CalculatedAttackPower{ CombatComponent->CalculateAttackPower() };
 
 		for (const FHitResult& HitResult : OutHits)
 		{
@@ -146,8 +172,7 @@ void AEternalStrikerWeapon::AttackByMultiLineTrace()
 
 			PlayHitImpactEffects(HitResult.Location);
 
-			//@TODO : Character의 Stat이 구현되면 Stat에 무기의 AttackPower or MagicPower를 연산해서 데미지를 전달해야 함
-			UGameplayStatics::ApplyDamage(HitActor, WeaponDataStruct.AttackPowerData, GetInstigatorController(), this, UDamageType::StaticClass());
+			UGameplayStatics::ApplyDamage(HitActor, CalculatedAttackPower, GetInstigatorController(), this, UDamageType::StaticClass());
 		}
 	}
 	else
@@ -170,6 +195,7 @@ void AEternalStrikerWeapon::PlayHitImpactEffects(const FVector& HitLocation)
 	ensureAlways(WeaponCameraShakeClass);
 	PC->ClientStartCameraShake(WeaponCameraShakeClass);
 	
+#pragma region HitStop
 	//UWorld* World{ GetWorld() };
 	//check(World);
 	//UGameplayStatics::SetGlobalTimeDilation(World, 0.1f);
@@ -185,6 +211,7 @@ void AEternalStrikerWeapon::PlayHitImpactEffects(const FVector& HitLocation)
 	//	0.01f,
 	//	false
 	//);
+#pragma endregion
 }
 
 void AEternalStrikerWeapon::PlayWeaponSwingSound()
