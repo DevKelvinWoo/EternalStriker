@@ -6,11 +6,5 @@ float AEternalStrikerEnemy::TakeDamage(float DamageAmount, FDamageEvent const& D
 
 	UE_LOG(LogTemp, Warning, TEXT("Actual Damage: %f"), ActualDamage);
 
-	EnemyHealth -= ActualDamage;
-	if (EnemyHealth <= 0)
-	{
-		EnemyHealth = 0;
-	}
-
 	return ActualDamage;
 }
